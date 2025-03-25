@@ -39,6 +39,13 @@ CREATE TABLE Kep (
         REFERENCES Hely(helyID) ON DELETE SET NULL
 );
 
+-- Képek tábla feltöltés
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (1, 'Naplemente', 10, 1, 1);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (2, 'Reök', 5, 2, 2);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (3, 'Modell', 8, 3, NULL);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (4, 'Hold', 15, 4, 4);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (5, 'Szeged', 20, 5, 5);
+
 -- Hozzászólás tábla létrehozása
 CREATE TABLE Hozzaszolas (
     hozzaszolasID INT PRIMARY KEY,
@@ -51,13 +58,18 @@ CREATE TABLE Hozzaszolas (
         REFERENCES Kep(kepID) ON DELETE CASCADE
 );
 
-
-
 -- Pályázat tábla létrehozása
 CREATE TABLE Palyazat (
     pID INT PRIMARY KEY,
     palyazatNev VARCHAR2(128) NOT NULL
 );
+
+--Pályázat tábla feltöltése
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (1, 'Természetfotó Pályázat');
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (2, 'Építészetifotó Pályázat');
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (3, 'Portréfotó Pályázat');
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (4, 'Éjszakaifotó Pályázat');
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (5, 'Streetfotó Pályázat');
 
 -- Nevezett tábla létrehozása (kapcsolótábla a pályázat és a kép között)
 CREATE TABLE Nevezett (
@@ -70,6 +82,13 @@ CREATE TABLE Nevezett (
     CONSTRAINT fk_palyazat FOREIGN KEY (pID) 
         REFERENCES Palyazat(pID) ON DELETE CASCADE
 );
+
+-- Nevezett tábla feltöltés
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (1, 1, 85);
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (2, 2, 70);
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (3, 3, 90);
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (4, 4, 60);
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (5, 5, 75);
 
 CREATE TABLE Kategoria (
     katID INT PRIMARY KEY,
