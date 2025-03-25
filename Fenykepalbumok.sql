@@ -3,14 +3,9 @@ CREATE TABLE Felhasznalo (
     fID INT PRIMARY KEY,
     fNev VARCHAR2(32) NOT NULL,
     email VARCHAR2(128) UNIQUE NOT NULL,
-    jelszo VARCHAR2(128) NOT NULL
-);
-
-CREATE TABLE Jogosultsag (
-    fID INT PRIMARY KEY,
-    jogosultsag VARCHAR2(32) NOT NULL,
-    CONSTRAINT fk_jogosultsag FOREIGN KEY (fID)
-        REFERENCES Felhasznalo(fID) ON DELETE CASCADE
+    jelszo VARCHAR2(128) NOT NULL,
+    profilkep VARCHAR2(128) NOT NULL,
+    jogosultsag VARCHAR2(32) NOT NULL
 );
 
 -- Album tábla létrehozása
@@ -80,6 +75,28 @@ CREATE TABLE Kategoria (
     katID INT PRIMARY KEY,
     kategoriaNev VARCHAR(128) UNIQUE NOT NULL
 );
+INSERT INTO Kategoria (katID,kategoriaNev) VALUES(
+1,"termeszet",
+2,"tajkep",
+3,"portre",
+4,"epiteszet",
+5,"cgi",
+6,"etel",
+7,"utazas",
+8,"varosi_elet",
+9,"sport",
+10,"allatok",
+11,"kutya",
+12,"macska",
+13,"makrofotozas",
+14,"divat",
+15,"fesztivalok",
+16,"tudomany",
+17,"technológia",
+18,"festmeny",
+19,"ejszakai",
+20,"csillagaszat"
+);
 
 CREATE TABLE KategoriaResze (
     katID INT,
@@ -87,10 +104,26 @@ CREATE TABLE KategoriaResze (
     FOREIGN KEY (katID) REFERENCES Kategoria(katID) ON DELETE CASCADE,
     FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
 );
+INSERT INTO KategoriaResze (katID,kepID)VALUES (
+1,1,
+1,2,
+2,3,
+3,4,
+4,5,
+5,6
+);
 
 CREATE TABLE Tartalmaz (
     aID INT,
     kepID INT,
     FOREIGN KEY (aID) REFERENCES Album(aID) ON DELETE CASCADE,
     FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
+);
+INSERT INTO Tartalmaz (aID,kepID)VALUES (
+1,1,
+1,2,
+2,3,
+3,4,
+4,5,
+5,6
 );
