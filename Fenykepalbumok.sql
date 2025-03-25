@@ -8,6 +8,17 @@ CREATE TABLE Felhasznalo (
     jogosultsag VARCHAR2(32) NOT NULL
 );
 
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (1, 'Kiss Anna', 'anna.kiss@gmail.com', 'Anna2024!', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (2, 'Nagy Péter', 'pnagy84@yahoo.com', 'nP_1984pass', 'admin');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (3, 'Tóth Eszter', 'eszter.t@hotmail.com', 'Eszti*321', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (4, 'Farkas Levente', 'levente.f@freemail.hu', 'Levi!pass2023', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (5, 'Kovács Dóra', 'dora.kovacs92@outlook.com', 'Dorka_92!', 'admin');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (6, 'Szabó Bence', 'bence.sz@gmail.com', 'SzB!pass456', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (7, 'Molnár Réka', 'reka.molnar@inf.u-szeged.hu', 'Reka1234@', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (8, 'Varga Gábor', 'vargag@gmail.com', 'GaborPass!', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (9, 'Balogh Enikő', 'eniko.balogh@citromail.hu', 'Eni*567', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (10, 'Papp Tamás', 'tamaspapp99@gmail.com', 'tamasP99$', 'admin');
+
 -- Album tábla létrehozása
 CREATE TABLE Album (
     aID INT PRIMARY KEY,
@@ -17,6 +28,18 @@ CREATE TABLE Album (
         REFERENCES Felhasznalo(fID) ON DELETE CASCADE
 );
 
+INSERT INTO Album (aID, albumNev, fID) VALUES (1, 'Természet Csodái', 2);
+INSERT INTO Album (aID, albumNev, fID) VALUES (2, 'Építészeti Részletek', 2);
+INSERT INTO Album (aID, albumNev, fID) VALUES (3, 'Portrék', 3);
+INSERT INTO Album (aID, albumNev, fID) VALUES (4, 'Naplementék', 4);
+INSERT INTO Album (aID, albumNev, fID) VALUES (5, 'Utazásaim', 5);
+INSERT INTO Album (aID, albumNev, fID) VALUES (6, 'Városi Élet', 7);
+INSERT INTO Album (aID, albumNev, fID) VALUES (7, 'Éjszakai Fotók', 6);
+INSERT INTO Album (aID, albumNev, fID) VALUES (8, 'Tengerpartok', 1);
+INSERT INTO Album (aID, albumNev, fID) VALUES (9, 'Makró Világ', 9);
+INSERT INTO Album (aID, albumNev, fID) VALUES (10, 'Fekete-fehér Hangulatok', 10);
+
+
 -- Hely tábla létrehozása
 CREATE TABLE Hely (
     helyID INT PRIMARY KEY,
@@ -25,6 +48,16 @@ CREATE TABLE Hely (
     orszag VARCHAR2(64) NOT NULL
 );
 
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (1, 'Szeged', 'Csongrád-Csanád', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (2, 'Budapest', 'Pest', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (3, 'Debrecen', 'Hajdú-Bihar', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (4, 'Győr', 'Győr-Moson-Sopron', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (5, 'Pécs', 'Baranya', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (6, 'Miskolc', 'Borsod-Abaúj-Zemplén', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (7, 'Nyíregyháza', 'Szabolcs-Szatmár-Bereg', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (8, 'Kecskemét', 'Bács-Kiskun', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (9, 'Szombathely', 'Vas', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (10, 'Eger', 'Heves', 'Magyarország');
 
 -- Kép tábla létrehozása
 CREATE TABLE Kep (
@@ -57,6 +90,17 @@ CREATE TABLE Hozzaszolas (
     CONSTRAINT fk_hozzaszolo_kep FOREIGN KEY (kepID)
         REFERENCES Kep(kepID) ON DELETE CASCADE
 );
+
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (1, 'Nagyon tetszik ez a kép!', 1, 1);
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (2, 'Gyönyörű színek!', 2, 2);
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (3, 'Ez a kedvencem!', 3, 5);
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (4, 'Szuper kompozíció!', 4, 3);
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (5, 'Gratulálok!', 5, 5);
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (6, 'Szép munka!', 6, 1);
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (7, 'Tetszik a fénykezelés.', 7, 2);
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (8, 'Imádom ezt a hangulatot.', 8, 3);
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (9, 'Nagyon kreatív!', 9, 4);
+INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (10, 'Lenyűgöző látvány.', 10, 4);
 
 -- Pályázat tábla létrehozása
 CREATE TABLE Palyazat (
