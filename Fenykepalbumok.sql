@@ -87,21 +87,21 @@ CREATE TABLE Kategoria (
 
 -- KategóriaRésze tábla létrehozása (kapcsolótábla a kategória és a kép között)
 CREATE TABLE KategoriaResze (
-    katID INT,
-    kepID INT,
+    katID INT NOT NULL,
+    kepID INT NOT NULL,
     CONSTRAINT fk_katid FOREIGN KEY (katID) REFERENCES Kategoria(katID) ON DELETE CASCADE,
     CONSTRAINT fk_kepid FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
 );
 
 -- Tartalmaz tábla létrehozása (kapcsolótábla a album és a kép között)
 CREATE TABLE Tartalmaz (
-    aID INT,
-    kepID INT,
+    aID INT NOT NULL,
+    kepID INT NOT NULL,
     CONSTRAINT fk_aid2 FOREIGN KEY (aID) REFERENCES Album(aID) ON DELETE CASCADE,
     CONSTRAINT fk_kepid2 FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
 );
 
-
+-- Felhasználó tábla feltöltése
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (1, 'Kiss Anna', 'anna.kiss@gmail.com', 'Anna2024!', 'felhasznalo');
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (2, 'Nagy Péter', 'pnagy84@yahoo.com', 'nP_1984pass', 'admin');
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (3, 'Tóth Eszter', 'eszter.t@hotmail.com', 'Eszti*321', 'felhasznalo');
@@ -113,6 +113,7 @@ INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (8, 'Varg
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (9, 'Balogh Enikő', 'eniko.balogh@citromail.hu', 'Eni*567', 'felhasznalo');
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (10, 'Papp Tamás', 'tamaspapp99@gmail.com', 'tamasP99$', 'admin');
 
+-- Hely tábla feltöltése
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (1, 'Szeged', 'Csongrád-Csanád', 'Magyarország');
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (2, 'Budapest', 'Pest', 'Magyarország');
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (3, 'Debrecen', 'Hajdú-Bihar', 'Magyarország');
@@ -124,7 +125,7 @@ INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (8, 'Kecskemét', 'Bács-
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (9, 'Szombathely', 'Vas', 'Magyarország');
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (10, 'Eger', 'Heves', 'Magyarország');
 
--- Képek tábla feltöltés
+-- Képek tábla feltöltése
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (1, 'Naplemente', 10, 1, 1);
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (2, 'Reök', 5, 2, 2);
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (3, 'Modell', 8, 3, NULL);
@@ -146,6 +147,7 @@ INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (18, 'Alföld2', 
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (19, 'Szitakötő2', 15, 2, 9);
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (20, 'Budapest2', 20, 1, 10);
 
+-- Album tábla feltöltése
 INSERT INTO Album (aID, albumNev, fID) VALUES (1, 'Természet Csodái', 2);
 INSERT INTO Album (aID, albumNev, fID) VALUES (2, 'Építészeti Részletek', 2);
 INSERT INTO Album (aID, albumNev, fID) VALUES (3, 'Portrék', 3);
@@ -157,6 +159,7 @@ INSERT INTO Album (aID, albumNev, fID) VALUES (8, 'Tengerpartok', 1);
 INSERT INTO Album (aID, albumNev, fID) VALUES (9, 'Makró Világ', 9);
 INSERT INTO Album (aID, albumNev, fID) VALUES (10, 'Fekete-fehér Hangulatok', 10);
 
+-- Hozzászólás tábla feltöltése
 INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (1, 'Nagyon tetszik ez a kép!', 1, 1);
 INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (2, 'Gyönyörű színek!', 2, 2);
 INSERT INTO Hozzaszolas (hozzaszolasID, tartalom, fID, kepID) VALUES (3, 'Ez a kedvencem!', 3, 5);
@@ -192,6 +195,7 @@ INSERT INTO Nevezett (kepID, pID, pont) VALUES (8, 8, 90);
 INSERT INTO Nevezett (kepID, pID, pont) VALUES (9, 9, 60);
 INSERT INTO Nevezett (kepID, pID, pont) VALUES (10, 10, 75);
 
+-- Kategória tábla feltöltése
 INSERT INTO Kategoria (katID,kategoriaNev) VALUES (1,'termeszet');
 INSERT INTO Kategoria (katID,kategoriaNev) VALUES (2,'tajkep');
 INSERT INTO Kategoria (katID,kategoriaNev) VALUES (3,'portre');
@@ -213,6 +217,7 @@ INSERT INTO Kategoria (katID,kategoriaNev) VALUES (18,'festmeny');
 INSERT INTO Kategoria (katID,kategoriaNev) VALUES (19,'ejszakai');
 INSERT INTO Kategoria (katID,kategoriaNev) VALUES (20,'csillagaszat');
 
+-- KategóriaRésze tábla feltöltése
 INSERT INTO KategoriaResze (katID,kepID) VALUES (1,1);
 INSERT INTO KategoriaResze (katID,kepID) VALUES (1,2);
 INSERT INTO KategoriaResze (katID,kepID) VALUES (2,3);
@@ -230,6 +235,7 @@ INSERT INTO KategoriaResze (katID,kepID) VALUES (3,9);
 INSERT INTO KategoriaResze (katID,kepID) VALUES (11,5);
 INSERT INTO KategoriaResze (katID,kepID) VALUES (8,4);
 
+-- Tartalmaz tábla feltöltése
 INSERT INTO Tartalmaz (aID,kepID) VALUES (1,1);
 INSERT INTO Tartalmaz (aID,kepID) VALUES (1,2);
 INSERT INTO Tartalmaz (aID,kepID) VALUES (2,3);
