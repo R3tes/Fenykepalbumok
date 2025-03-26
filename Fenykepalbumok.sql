@@ -78,6 +78,21 @@ INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (2, 'Reök', 5, 2
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (3, 'Modell', 8, 3, NULL);
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (4, 'Hold', 15, 4, 4);
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (5, 'Szeged', 20, 5, 5);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (6, 'Kiskutya', 10, 6, 6);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (7, 'Kiscica', 5, 7, 7);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (8, 'Alföld', 8, 8, 8);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (9, 'Szitakötő', 15, 9, 9);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (10, 'Budapest', 20, 10, 10);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (11, 'Naplemente2', 10, 10, 1);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (12, 'Reök2', 5, 9, 2);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (13, 'Modell2', 8, 8, NULL);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (14, 'Hold2', 15, 7, 4);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (15, 'Szeged2', 20, 6, 5);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (16, 'Kiskutya2', 10, 5, 6);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (17, 'Kiscica2', 5, 4, 7);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (18, 'Alföld2', 8, 3, 8);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (19, 'Szitakötő2', 15, 2, 9);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (20, 'Budapest2', 20, 1, 10);
 
 -- Hozzászólás tábla létrehozása
 CREATE TABLE Hozzaszolas (
@@ -114,6 +129,11 @@ INSERT INTO Palyazat (pID, palyazatNev) VALUES (2, 'Építészetifotó Pályáza
 INSERT INTO Palyazat (pID, palyazatNev) VALUES (3, 'Portréfotó Pályázat');
 INSERT INTO Palyazat (pID, palyazatNev) VALUES (4, 'Éjszakaifotó Pályázat');
 INSERT INTO Palyazat (pID, palyazatNev) VALUES (5, 'Streetfotó Pályázat');
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (6, 'Kisállatfotó Pályázat');
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (7, 'Utazásfotó Pályázat');
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (8, 'Holdfotó Pályázat');
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (9, 'Vadvilágfotó Pályázat');
+INSERT INTO Palyazat (pID, palyazatNev) VALUES (10, 'Stúdiófotó Pályázat');
 
 -- Nevezett tábla létrehozása (kapcsolótábla a pályázat és a kép között)
 CREATE TABLE Nevezett (
@@ -133,6 +153,11 @@ INSERT INTO Nevezett (kepID, pID, pont) VALUES (2, 2, 70);
 INSERT INTO Nevezett (kepID, pID, pont) VALUES (3, 3, 90);
 INSERT INTO Nevezett (kepID, pID, pont) VALUES (4, 4, 60);
 INSERT INTO Nevezett (kepID, pID, pont) VALUES (5, 5, 75);
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (6, 6, 85);
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (7, 7, 70);
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (8, 8, 90);
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (9, 9, 60);
+INSERT INTO Nevezett (kepID, pID, pont) VALUES (10, 10, 75);
 
 CREATE TABLE Kategoria (
     katID INT PRIMARY KEY,
