@@ -1,14 +1,3 @@
-DROP TABLE KategoriaResze;
-DROP TABLE Kategoria;
-DROP TABLE Nevezett;
-DROP TABLE Palyazat;
-DROP TABLE Hozzaszolas;
-DROP TABLE Tartalmaz;
-DROP TABLE Kep;
-DROP TABLE Hely;
-DROP TABLE Album;
-DROP TABLE Felhasznalo;
-
 -- Felhasználó tábla létrehozás
 CREATE TABLE Felhasznalo (
     fID INT PRIMARY KEY,
