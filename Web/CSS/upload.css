@@ -1,0 +1,30 @@
+form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 15px;
+    margin: 20px;
+    padding: 10px;
+    background-color: #ffffff;
+}
+
+.formHead {
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+.uploadForm{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+.formElement{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
