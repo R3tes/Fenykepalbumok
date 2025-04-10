@@ -4,6 +4,11 @@ include('db_connection.php');
 session_start();
 $is_admin = $_SESSION['is_admin'];
 
+if (isset($_SESSION['login_success'])) {
+    echo "<p style='color:green; text-align:center;'>" . $_SESSION['login_success'] . "</p>";
+    unset($_SESSION['login_success']);
+}
+
 $query = "SELECT p.pID, p.palyazatNev
           FROM Palyazat p
           ORDER BY p.pID DESC";
