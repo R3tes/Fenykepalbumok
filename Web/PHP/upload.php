@@ -1,3 +1,32 @@
+<?php
+    ////////////////
+    // DEPRECATED //
+    ////////////////
+    session_start();
+    include('../../web_lara/db_connection.php');
+    
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $fIDUpload = $_SESSION['fID'];
+        $kepNev = $_POST['name'];
+        $kategoria = explode(' ',$_POST['categories']);
+        $hely = $_POST['country'] .'--'.$_POST['county'].'--'.$_POST['city'];
+        var_dump($kepNev,$fIDUpload,$kategoria);
+        if (!empty($kepNev) && !empty($fIDUpload) && !empty($kategoria)) {
+            $stmt = oci_parse($conn, "INSERT INTO Kep (kepID, kepNev, fID)
+                                      VALUES (21, :kepNev , 1");
+            oci_bind_by_name($stmt, ":kepNev", $kepNev);
+            //oci_bind_by_name($stmt, ":fID", $fIDUpload);
+            if (oci_execute($stmt)) {
+                $_SESSION['success_message'] = "Upload successful!";
+            } else {
+                $e = oci_error($stmt);
+                die("Database Error: " . $e['message']);
+            }
+            oci_free_statement($stmt);
+        }
+        oci_close($conn);
+    }
+?>
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -12,12 +41,16 @@
 <body>
     <header>
         <div class="menu">
-            <a href="login.html" id="loginButton"><button class="Button">Bejelentkezés</button></a>
-            <a href="profile.html" id="profileButton"><button class="Button">Profil</button></a>
+        <?php if(isset($_SESSION['fID'])): ?>
+                <a href="profile.php?id=<?php echo $_SESSION['fID'];?>" id="profileButton"><button class="interact">Profil</button></a>
+                <a href="logout.php" id="logoutButton"><button class="interact">Kijelentkezés</button></a>
+            <?php else:?>    
+                <a href="../../web_lara/login.php" id="loginButton"><button class="interact">Bejelentkezés</button></a>
+            <?php endif; ?>
         </div>
     </header>
     <main>
-        <form action="POST">
+        <form method="POST">
             <div class="formHead">
                 <h2>Fénykép feltöltése</h2>
             </div>
@@ -39,7 +72,7 @@
                         <input id="city" name="city">
                     </div>
                     <label for="categoryInput">Kategória:</label>
-                    <input list="categories" id="categoryInput" name="selectedOption">
+                    <input list="categories" id="categoryInput" name="categories">
                     <datalist id="categories">
                         <option value="kat1">
                         <option value="kat2">
