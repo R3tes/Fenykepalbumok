@@ -39,6 +39,11 @@ form{
     flex: 1;
 }
 
+#delete{
+    background-color: #ee1111;
+    color: #ffffff;
+}
+
 .popup {
     display: none;
     position: fixed;

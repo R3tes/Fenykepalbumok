@@ -1,7 +1,5 @@
 <?php
-    ////////////////
-    // DEPRECATED //
-    ////////////////
+    // régi
     session_start();
     include('../../web_lara/db_connection.php');
     

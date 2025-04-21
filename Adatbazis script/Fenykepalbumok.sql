@@ -78,6 +78,7 @@ CREATE TABLE Kategoria (
 CREATE TABLE KategoriaResze (
     katID INT NOT NULL,
     kepID INT NOT NULL,
+    PRIMARY KEY (kepID, katID),
     CONSTRAINT fk_katid FOREIGN KEY (katID) REFERENCES Kategoria(katID) ON DELETE CASCADE,
     CONSTRAINT fk_kepid FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
 );
@@ -86,9 +87,34 @@ CREATE TABLE KategoriaResze (
 CREATE TABLE Tartalmaz (
     aID INT NOT NULL,
     kepID INT NOT NULL,
+    PRIMARY KEY (kepID, aID),
     CONSTRAINT fk_aid2 FOREIGN KEY (aID) REFERENCES Album(aID) ON DELETE CASCADE,
     CONSTRAINT fk_kepid2 FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
 );
+-- Sequencek amik száomntartják a következő indexet
+CREATE SEQUENCE hely_seq
+    START WITH 11  
+    INCREMENT BY 1 
+    NOCACHE  
+    NOCYCLE; 
+
+CREATE SEQUENCE kat_seq
+    START WITH 21 
+    INCREMENT BY 1  
+    NOCACHE  
+    NOCYCLE;
+
+CREATE SEQUENCE kep_seq
+    START WITH 21  
+    INCREMENT BY 1  
+    NOCACHE  
+    NOCYCLE;
+
+CREATE SEQUENCE felhasznalo_seq
+    START WITH 11  
+    INCREMENT BY 1  
+    NOCACHE  
+    NOCYCLE;
 
 -- Felhasználó tábla feltöltése
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (1, 'Kiss Anna', 'anna.kiss@gmail.com', 'Anna2024!', 'felhasznalo');
@@ -103,16 +129,16 @@ INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (9, 'Balo
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (10, 'Papp Tamás', 'tamaspapp99@gmail.com', 'tamasP99$', 'admin');
 
 -- Hely tábla feltöltése
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (1, 'Szeged', 'Csongrád-Csanád', 'Magyarország');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (2, 'Budapest', 'Pest', 'Magyarország');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (3, 'Debrecen', 'Hajdú-Bihar', 'Magyarország');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (4, 'Győr', 'Győr-Moson-Sopron', 'Magyarország');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (5, 'Pécs', 'Baranya', 'Magyarország');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (6, 'Miskolc', 'Borsod-Abaúj-Zemplén', 'Magyarország');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (7, 'Nyíregyháza', 'Szabolcs-Szatmár-Bereg', 'Magyarország');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (8, 'Kecskemét', 'Bács-Kiskun', 'Magyarország');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (9, 'Szombathely', 'Vas', 'Magyarország');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (10, 'Eger', 'Heves', 'Magyarország');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (1, 'Szeged', 'Csongrad-Csanad', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (2, 'Budapest', 'Pest', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (3, 'Debrecen', 'Hajdu-Bihar', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (4, 'Gyor', 'Gyor-Moson-Sopron', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (5, 'Pecs', 'Baranya', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (6, 'Miskolc', 'Borsod-Abauj-Zemplen', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (7, 'Nyiregyhaza', 'Szabolcs-Szatmar-Bereg', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (8, 'Kecskemet', 'Bacs-Kiskun', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (9, 'Szombathely', 'Vas', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (10, 'Eger', 'Heves', 'Magyarorszag');
 
 -- Képek tábla feltöltése
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (1, 'Naplemente', 10, 1, 1);

@@ -6,6 +6,19 @@
     }
 
     $fID = substr(explode('?',$_SERVER['REQUEST_URI'])[1],3);
+    $stmt = oci_parse($conn, "SELECT * FROM Kep WHERE fID = :fID");
+    oci_bind_by_name($stmt, ":fID", $fID);
+    if (oci_execute($stmt)) {
+        if(!$row = oci_fetch_assoc($stmt)){
+            //Ha nincs ilyen idjű felhasználó redirectel
+            header("Location: index.php");
+        }
+    } else {
+        $e = oci_error($stmt);
+        die("Database Error: " . $e['message']);
+    }
+
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fIDUpload = $_SESSION['fID'];
         $kepNev = $_POST['name'];
@@ -18,7 +31,6 @@
                                     ['a','e','i','o','o','o','u','u','u','A','E','I','O','O','O','U','U','U'],$_POST['county']);
             $cleanCountry = str_replace(['á','é','í','ó','ö','ő','ú','ü','ű','Á','É','Í','Ó','Ö','Ő','Ú','Ü','Ű'],
                                         ['a','e','i','o','o','o','u','u','u','A','E','I','O','O','O','U','U','U'],$_POST['country']);
-            //var_dump($cleanCity,$cleanCounty,$cleanCountry);
             $stmt = oci_parse($conn, "SELECT helyID FROM Hely WHERE varos = :city AND megye = :county AND orszag = :country"); 
             oci_bind_by_name($stmt, ":city", $cleanCity); 
             oci_bind_by_name($stmt, ":county", $cleanCounty); 
@@ -42,21 +54,35 @@
         }
         $kepID = 0;
         if (!empty($kepNev) && !empty($fIDUpload)) {
-            
+            $cleanNev= str_replace(['á','é','í','ó','ö','ő','ú','ü','ű','Á','É','Í','Ó','Ö','Ő','Ú','Ü','Ű'],
+                                    ['a','e','i','o','o','o','u','u','u','A','E','I','O','O','O','U','U','U'],$kepNev);
             $stmt = oci_parse($conn, "INSERT INTO Kep (kepID, kepNev, fID, helyID)
                                       VALUES (kep_seq.NEXTVAL, :kepNev, :fID, :helyID)
                                       RETURNING kepID INTO :kepID");
-            oci_bind_by_name($stmt, ":kepNev", $kepNev);
+            oci_bind_by_name($stmt, ":kepNev", $cleanNev);
             oci_bind_by_name($stmt, ":fID", $fIDUpload);
             oci_bind_by_name($stmt, ":helyID", $hely);
             oci_bind_by_name($stmt, ":kepID", $kepID, SQLT_INT);
-            if (oci_execute($stmt)) {
-                $_SESSION['success_message'] = "Upload successful!";
-            } else {
+            if (!oci_execute($stmt)) {
                 $e = oci_error($stmt);
                 die("Database Error: " . $e['message']);
             }
+            
+            if (isset($_FILES["uploadedFile"]) && $_FILES["uploadedFile"]["error"] == 0) {
+                $uploadDir = "../PICS/";
+                $fileExt = strtolower(pathinfo($_FILES["uploadedFile"]["name"], PATHINFO_EXTENSION));
+                $uploadFile = $uploadDir . $cleanNev . "." . $fileExt;
+                $check = getimagesize($_FILES["uploadedFile"]["tmp_name"]);
+                if (!$check) {
+                    die("File is not a valid image.");
+                }
+                if (!move_uploaded_file($_FILES["uploadedFile"]["tmp_name"], $uploadFile)) {
+                    echo "The file ". htmlspecialchars( basename( $_FILES["uploadedFile"]["name"])). " failed to upload.";
+                }
+            }
         }
+        
+        
         if(!empty($_POST['categories'])){
             $kategoria = explode(' ',trim($_POST['categories']));
             $katRes = [];
@@ -91,9 +117,6 @@
                 oci_free_statement($stmt);
             }
         }
-        
-        
-        
     }
 ?>
 <!DOCTYPE html>
@@ -116,15 +139,26 @@
         </div>
     </header>
     <main>
-        <!--TODO név lekérdezés -->
-        <h1><?php ?></h1>
+        <h1 class="title">
+            <?php
+                $stmt = oci_parse($conn, "SELECT fNev FROM Felhasznalo WHERE fID = :fID");
+                oci_bind_by_name($stmt, ":fID", $fID);
+                if (oci_execute($stmt)) {
+                    $row = oci_fetch_assoc($stmt);
+                    echo $row["FNEV"];
+                } else {
+                    $e = oci_error($stmt);
+                    die("Database Error: " . $e['message']);
+                }
+            ?>
+        </h1>
         <?php if($_SESSION['fID'] == $fID): ?>
             <div class="topArea">
                 <button onclick="openPopup()">Kép feltöltése</button>
                 <div id="uploadPopup" class="popup">
                     <div class="popup-content">
                         <span onclick="closePopup()" class="close">&times;</span>
-                        <form method="POST">
+                        <form method="POST" enctype="multipart/form-data">
                         <link rel="stylesheet" href="../CSS/upload.css">
                             <div class="formHead">
                                 <h2>Fénykép feltöltése</h2>
@@ -134,11 +168,11 @@
 
                                 <div class="drop-area">
                                     <label for="fileInput">Válassza ki a feltöltendő képet:</label>
-                                    <input type="file" id="fileInput" name="uploadedFile" accept="image/*">
+                                    <input type="file" id="fileInput" name="uploadedFile" accept="image/*" require>
                                 </div>
                                 <div class="formElement">
                                     <label for="nameInput">Név:</label>
-                                    <input id="nameInput" name="name">
+                                    <input id="nameInput" name="name" require>
                                     <label for="place">Hely:</label>
                                     <div id="place">
                                         <input id="country" name="country" placeholder="Ország">
@@ -146,7 +180,7 @@
                                         <input id="city" name="city" placeholder="Város">
                                     </div>
                                     <label for="categoryInput">Kategória:</label>
-                                    <input list="categories" id="categoryInput" name="categories">
+                                    <input list="categories" id="categoryInput" name="categories" require>
                                     <button type="submit">Feltöltés</button>
                                 </div>
                             </div>
@@ -184,7 +218,9 @@
                             <img src="" alt="<?php echo $row['ALBUMNEV'];?>">
                             <div class="imageInfo">
                                 <h3><?php echo $row['ALBUMNEV'];?></h3>
-                                <p>pont: <?php echo $row['PONT'];?></p>
+                                <!--TODO: fix-->
+                                <!--Az összesített pontok valamiért 2x akkorák mint kéne-->
+                                <p>pont: <?php echo $row['PONT']/2;?></p>
                             </div>
                         </a>
                 <?php endwhile;?>
@@ -208,7 +244,18 @@
                     oci_execute($stmt);
                     while ($row = oci_fetch_assoc($stmt)): ?>
                         <a href="picture.php?id=<?php echo $row['KEPID'];?>" class="image">
-                            <img src="" alt="<?php echo $row['KEPNEV'];?>">
+                            <img src="<?php
+                                        $dir = "../PICS";
+                                        $files = scandir($dir);
+                                        foreach ($files as $file) {
+                                            if (fnmatch($row['KEPNEV'].".*", $file)) {
+                                                echo "../PICS/".$file;
+                                            } else {
+                                                echo "";
+                                            }
+                                        }
+                                        ?>" 
+                                        alt="<?php echo $row['KEPNEV'];?>">
                             <div class="imageInfo">
                                 <h3><?php echo $row['KEPNEV'];?></h3>
                                 <p>pont: <?php echo $row['ERTEKELES'];?></p>
@@ -219,8 +266,7 @@
         </div>
         <?php if($_SESSION['fID'] == $fID): ?>
             <div class="accountControls">
-                <a href="DELETE" id="profileButton"><button class="interact">Törlés</button></a>
-                <a href="MODIFY" id="profileButton"><button class="interact">Módosítás</button></a>
+                <a href="modifyProfile.php" id="profileButton"><button class="interact">Módosítás</button></a>
             </div>
         <?php endif; ?>
         
