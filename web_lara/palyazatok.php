@@ -9,6 +9,11 @@ if (isset($_SESSION['login_success'])) {
     unset($_SESSION['login_success']);
 }
 
+if (isset($_SESSION['success_message'])) {
+    echo "<div class='success-message'>" . $_SESSION['success_message'] . "</div>";
+    unset($_SESSION['success_message']);
+}
+
 $query = "SELECT p.pID, p.palyazatNev
           FROM Palyazat p
           ORDER BY p.pID DESC";
@@ -50,8 +55,7 @@ oci_execute($stmt);
                 <td><?php echo htmlspecialchars($row['PALYAZATNEV']); ?></td>
                 <td>
                     <?php if (!$is_admin): ?>
-                        <!--TODO: itt is lehet hasznalnia kep feltoltes oldalt ha kesz-->
-                        <a href="kep_feltoltes.php?id=<?php echo $row['PID']; ?>" class="btn">Jelentkezés</a>
+                        <a href="palyazatra_jelentkezes.php?id=<?php echo $row['PID']; ?>" class="btn">Jelentkezés</a>
                     <?php endif; ?>
                 </td>
                 <?php if ($is_admin): ?>

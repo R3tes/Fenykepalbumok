@@ -16,3 +16,8 @@ DROP TABLE Kep; <br>
 DROP TABLE Hely; <br>
 DROP TABLE Album; <br>
 DROP TABLE Felhasznalo; <br>
+
+## Fontos!!
+- legelső lépéssként le kell futtatni a setup filet hogy a hashelt jelszavak rendbe legyenek az előre insertelt felhasználóknál
+- mindenkinek 12345 a jelszava akik előre hozzá vannak adva
+
