@@ -116,6 +116,12 @@ CREATE SEQUENCE felhasznalo_seq
     NOCACHE  
     NOCYCLE;
 
+CREATE SEQUENCE palyazat_seq
+START WITH 11
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
 -- Felhasználó tábla feltöltése
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (1, 'Kiss Anna', 'anna.kiss@gmail.com', 'Anna2024!', 'felhasznalo');
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (2, 'Nagy Péter', 'pnagy84@yahoo.com', 'nP_1984pass', 'admin');
