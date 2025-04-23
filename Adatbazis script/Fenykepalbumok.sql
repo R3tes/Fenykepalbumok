@@ -123,19 +123,18 @@ CREATE SEQUENCE palyazat_seq
     NOCYCLE;
 
 -- Felhasználó tábla feltöltése (jelszó: 12345, hashelve)
-INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES
-(1, 'Kiss Anna', 'anna.kiss@gmail.com', '12345', 'felhasznalo'),
-(2, 'Nagy Péter', 'pnagy84@yahoo.com', '12345', 'admin'),
-(3, 'Tóth Eszter', 'eszter.t@hotmail.com', '12345', 'felhasznalo'),
-(4, 'Farkas Levente', 'levente.f@freemail.hu', '12345', 'felhasznalo'),
-(5, 'Kovács Dóra', 'dora.kovacs92@outlook.com', '12345', 'admin'),
-(6, 'Szabó Bence', 'bence.sz@gmail.com', '12345', 'felhasznalo'),
-(7, 'Molnár Réka', 'reka.molnar@inf.u-szeged.hu', '12345', 'felhasznalo'),
-(8, 'Varga Gábor', 'vargag@gmail.com', '12345', 'felhasznalo'),
-(9, 'Balogh Enikő', 'eniko.balogh@citromail.hu', '12345', 'felhasznalo'),
-(10, 'Papp Tamás', 'tamaspapp99@gmail.com', '12345', 'admin'),
-(11, 'Test Admin', 'testadmin@gmail.com', '12345', 'admin'),
-(12, 'Test Felhasznalo', 'testfelhasznalo@gmail.com', '12345', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (1, 'Kiss Anna', 'anna.kiss@gmail.com', '12345', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (2, 'Nagy Péter', 'pnagy84@yahoo.com', '12345', 'admin');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (3, 'Tóth Eszter', 'eszter.t@hotmail.com', '12345', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (4, 'Farkas Levente', 'levente.f@freemail.hu', '12345', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (5, 'Kovács Dóra', 'dora.kovacs92@outlook.com', '12345', 'admin');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (6, 'Szabó Bence', 'bence.sz@gmail.com', '12345', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (7, 'Molnár Réka', 'reka.molnar@inf.u-szeged.hu', '12345', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (8, 'Varga Gábor', 'vargag@gmail.com', '12345', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (9, 'Balogh Enikő', 'eniko.balogh@citromail.hu', '12345', 'felhasznalo');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (10, 'Papp Tamás', 'tamaspapp99@gmail.com', '12345', 'admin');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (11, 'Test Admin', 'testadmin@gmail.com', '12345', 'admin');
+INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (12, 'Test Felhasznalo', 'testfelhasznalo@gmail.com', '12345', 'felhasznalo');
 
 -- Hely tábla feltöltése
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (1, 'Szeged', 'Csongrad-Csanad', 'Magyarorszag');

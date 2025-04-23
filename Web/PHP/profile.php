@@ -6,18 +6,6 @@
     }
 
     $fID = substr(explode('?',$_SERVER['REQUEST_URI'])[1],3);
-    $stmt = oci_parse($conn, "SELECT * FROM Kep WHERE fID = :fID");
-    oci_bind_by_name($stmt, ":fID", $fID);
-    if (oci_execute($stmt)) {
-        if(!$row = oci_fetch_assoc($stmt)){
-            //Ha nincs ilyen idjű felhasználó redirectel
-            header("Location: index.php");
-        }
-    } else {
-        $e = oci_error($stmt);
-        die("Database Error: " . $e['message']);
-    }
-
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fIDUpload = $_SESSION['fID'];
