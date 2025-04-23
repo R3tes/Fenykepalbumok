@@ -17,6 +17,12 @@ DROP TABLE Hely; <br>
 DROP TABLE Album; <br>
 DROP TABLE Felhasznalo; <br>
 
+DROP SEQUENCE hely_seq;<br>
+DROP SEQUENCE kat_seq;<br>
+DROP SEQUENCE kep_seq;<br>
+DROP SEQUENCE felhasznalo_seq;<br>
+DROP SEQUENCE palyazat_seq;<br>
+
 ## Fontos!!
 - legelső lépéssként le kell futtatni a setup filet hogy a hashelt jelszavak rendbe legyenek az előre insertelt felhasználóknál
 - mindenkinek 12345 a jelszava akik előre hozzá vannak adva
