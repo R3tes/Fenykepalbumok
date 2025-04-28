@@ -8,6 +8,15 @@ CREATE TABLE Felhasznalo (
     jogosultsag VARCHAR2(32) NOT NULL
 );
 
+-- Likeok tábla létrehozása
+CREATE TABLE Likeok (
+    fID INT,
+    kepID INT,
+    PRIMARY KEY (fID, kepID),
+    FOREIGN KEY (fID) REFERENCES Felhasznalo(fID) ON DELETE CASCADE,
+    FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
+);
+
 -- Album tábla létrehozása
 CREATE TABLE Album (
     aID INT PRIMARY KEY,
@@ -118,6 +127,12 @@ CREATE SEQUENCE felhasznalo_seq
 
 CREATE SEQUENCE palyazat_seq
     START WITH 31
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+    
+CREATE SEQUENCE hozzaszolas_seq
+    START WITH 11
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
@@ -300,7 +315,6 @@ INSERT INTO Kategoria (katID, kategoriaNev) VALUES (38, 'tomegkozlekedes');
 INSERT INTO Kategoria (katID, kategoriaNev) VALUES (39, 'multikulturalizmus');
 INSERT INTO Kategoria (katID, kategoriaNev) VALUES (40, 'varosfejlesztes');
 
-
 -- KategóriaRésze tábla feltöltése
 INSERT INTO KategoriaResze (katID,kepID) VALUES (1,1);
 INSERT INTO KategoriaResze (katID,kepID) VALUES (1,2);
@@ -335,3 +349,5 @@ INSERT INTO Tartalmaz (aID,kepID) VALUES (8,3);
 INSERT INTO Tartalmaz (aID,kepID) VALUES (4,8);
 INSERT INTO Tartalmaz (aID,kepID) VALUES (9,6);
 INSERT INTO Tartalmaz (aID,kepID) VALUES (2,5);
+
+INSERT INTO Kategoria (katID, kategoriaNev) VALUES (41, 'valami');
