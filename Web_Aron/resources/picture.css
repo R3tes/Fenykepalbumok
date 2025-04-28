@@ -1,0 +1,113 @@
+.picture-page {
+    position: relative;
+    padding: 20px;
+}
+
+.picture-container img {
+    max-width: 30%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.info-container {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    margin-top: 1rem;
+}
+
+.like-button {
+    background-color: #28a3a7;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.like-button:hover {
+    background-color: #217588;
+}
+
+.like-button.liked {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+.like-button.liked:hover {
+    background-color: gray;
+}
+
+.comments-container {
+    position: absolute;
+    top: 3%;
+    right: 1%;
+    width: 25%;
+    height: 80vh;
+    background: #e5fcff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.comments-container h3 {
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+
+.comments-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comments {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment {
+    background: #f8f8f8;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.comment-user {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.comment-text {
+    font-size: 14px;
+    color: #555;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+.comments-scrollable::-webkit-scrollbar {
+    width: 8px;
+}
+.comments-scrollable::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+.comments-scrollable::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
