@@ -8,15 +8,6 @@ CREATE TABLE Felhasznalo (
     jogosultsag VARCHAR2(32) NOT NULL
 );
 
--- Likeok tábla létrehozása
-CREATE TABLE Likeok (
-    fID INT,
-    kepID INT,
-    PRIMARY KEY (fID, kepID),
-    FOREIGN KEY (fID) REFERENCES Felhasznalo(fID) ON DELETE CASCADE,
-    FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
-);
-
 -- Album tábla létrehozása
 CREATE TABLE Album (
     aID INT PRIMARY KEY,
@@ -45,6 +36,15 @@ CREATE TABLE Kep (
         REFERENCES Felhasznalo(fID) ON DELETE CASCADE,
     CONSTRAINT fk_hely FOREIGN KEY (helyID) 
         REFERENCES Hely(helyID) ON DELETE SET NULL
+);
+
+-- Likeok tábla létrehozása
+CREATE TABLE Likeok (
+    fID INT,
+    kepID INT,
+    PRIMARY KEY (fID, kepID),
+    FOREIGN KEY (fID) REFERENCES Felhasznalo(fID) ON DELETE CASCADE,
+    FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
 );
 
 -- Hozzászólás tábla létrehozása
@@ -102,25 +102,25 @@ CREATE TABLE Tartalmaz (
 );
 -- Sequencek amik száomntartják a következő indexet
 CREATE SEQUENCE hely_seq
-    START WITH 31
+    START WITH 32
     INCREMENT BY 1 
     NOCACHE  
     NOCYCLE; 
 
 CREATE SEQUENCE kat_seq
-    START WITH 41
+    START WITH 42
     INCREMENT BY 1  
     NOCACHE  
     NOCYCLE;
 
 CREATE SEQUENCE kep_seq
-    START WITH 21
+    START WITH 24
     INCREMENT BY 1  
     NOCACHE  
     NOCYCLE;
 
 CREATE SEQUENCE felhasznalo_seq
-    START WITH 21
+    START WITH 13
     INCREMENT BY 1  
     NOCACHE  
     NOCYCLE;
@@ -132,6 +132,12 @@ CREATE SEQUENCE palyazat_seq
     NOCYCLE;
     
 CREATE SEQUENCE hozzaszolas_seq
+    START WITH 11
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+    
+CREATE SEQUENCE album_seq
     START WITH 11
     INCREMENT BY 1
     NOCACHE
@@ -183,6 +189,8 @@ INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (28, 'Szentgotthard', 'Va
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (29, 'Paks', 'Tolna', 'Magyarorszag');
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (30, 'Szombathely', 'Vas', 'Magyarorszag');
 
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (31, 'ValamiVaros', 'ValamiMegye', 'Magyarorszag');
+
 -- Képek tábla feltöltése
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (1, 'Naplemente', 10, 1, 1);
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (2, 'Reök', 5, 2, 2);
@@ -204,6 +212,10 @@ INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (17, 'Kiscica2', 
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (18, 'Alföld2', 8, 3, 8);
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (19, 'Szitakötő2', 15, 2, 9);
 INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (20, 'Budapest2', 20, 1, 10);
+
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (21, 'Naplemente3', 10, 1, 1);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (22, 'Naplemente4', 15, 1, 1);
+INSERT INTO Kep (kepID, kepNev, ertekeles, fID, helyID) VALUES (23, 'Naplemente5', 120, 1, 1);
 
 -- Album tábla feltöltése
 INSERT INTO Album (aID, albumNev, fID) VALUES (1, 'Természet Csodái', 2);
@@ -315,6 +327,8 @@ INSERT INTO Kategoria (katID, kategoriaNev) VALUES (38, 'tomegkozlekedes');
 INSERT INTO Kategoria (katID, kategoriaNev) VALUES (39, 'multikulturalizmus');
 INSERT INTO Kategoria (katID, kategoriaNev) VALUES (40, 'varosfejlesztes');
 
+INSERT INTO Kategoria (katID, kategoriaNev) VALUES (41, 'valami');
+
 -- KategóriaRésze tábla feltöltése
 INSERT INTO KategoriaResze (katID,kepID) VALUES (1,1);
 INSERT INTO KategoriaResze (katID,kepID) VALUES (1,2);
@@ -349,5 +363,3 @@ INSERT INTO Tartalmaz (aID,kepID) VALUES (8,3);
 INSERT INTO Tartalmaz (aID,kepID) VALUES (4,8);
 INSERT INTO Tartalmaz (aID,kepID) VALUES (9,6);
 INSERT INTO Tartalmaz (aID,kepID) VALUES (2,5);
-
-INSERT INTO Kategoria (katID, kategoriaNev) VALUES (41, 'valami');
