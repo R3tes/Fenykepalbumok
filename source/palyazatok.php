@@ -14,9 +14,7 @@ if (isset($_SESSION['success_message'])) {
     unset($_SESSION['success_message']);
 }
 
-$query = "SELECT p.pID, p.palyazatNev
-          FROM Palyazat p
-          ORDER BY p.pID DESC";
+$query = "SELECT p.pID, p.palyazatNev FROM Palyazat p ORDER BY p.pID DESC";
 $stmt = oci_parse($conn, $query);
 oci_execute($stmt);
 ?>
@@ -30,6 +28,7 @@ oci_execute($stmt);
     <link rel="stylesheet" href="resources/CSS/style.css">
 </head>
 <body>
+<?php include 'navbar.php'; ?>
 <div class="container">
     <h1>Pályázatok</h1>
 
@@ -52,18 +51,59 @@ oci_execute($stmt);
         <tbody>
         <?php while ($row = oci_fetch_assoc($stmt)): ?>
             <tr>
-                <td><?php echo htmlspecialchars($row['PALYAZATNEV']); ?></td>
                 <td>
-                    <?php if (!$is_admin): ?>
-                        <a href="palyazatra_jelentkezes.php?id=<?php echo $row['PID']; ?>" class="btn">Jelentkezés</a>
-                    <?php endif; ?>
+                    <a href="palyazat_kepek.php?id=<?php echo $row['PID']; ?>">
+                        <?php echo htmlspecialchars($row['PALYAZATNEV']); ?>
+                    </a>
                 </td>
+                <td>
+                    <?php
+                    if (!$is_admin) {
+                        $nyertesQuery = "SELECT COUNT(*) AS CNT FROM Nyertesek WHERE pID = :pID";
+                        $nyertesStmt = oci_parse($conn, $nyertesQuery);
+                        oci_bind_by_name($nyertesStmt, ":pID", $row['PID']);
+                        oci_execute($nyertesStmt);
+                        $nyertesRow = oci_fetch_assoc($nyertesStmt);
+                        $vanNyertes = $nyertesRow['CNT'] > 0;
+                        oci_free_statement($nyertesStmt);
+
+                        if (!$vanNyertes): ?>
+                            <a href="palyazatra_jelentkezes.php?id=<?php echo $row['PID']; ?>" class="btn">Jelentkezés</a>
+                        <?php else: ?>
+                            <span style="color:gray;">Lezárt</span>
+                        <?php endif;
+                    }
+                    ?>
+                </td>
+
+
+
                 <?php if ($is_admin): ?>
                     <td>
                         <a href="admin_palyazat_szerkeszt.php?id=<?php echo $row['PID']; ?>" class="btn">Szerkesztés</a>
                         <a href="admin_palyazat_torles.php?id=<?php echo $row['PID']; ?>" class="btn">Törlés</a>
+
+                        <?php
+                        $nyertesQuery = "SELECT COUNT(*) AS CNT FROM Nyertesek WHERE pID = :pID";
+                        $nyStmt = oci_parse($conn, $nyertesQuery);
+                        oci_bind_by_name($nyStmt, ":pID", $row['PID']);
+                        oci_execute($nyStmt);
+                        $nyertesRow = oci_fetch_assoc($nyStmt);
+                        $vanNyertes = $nyertesRow['CNT'] > 0;
+                        oci_free_statement($nyStmt);
+                        ?>
+
+                        <?php if (!$vanNyertes): ?>
+                            <form method="POST" action="hirdet_nyertest.php" style="display:inline;">
+                            <input type="hidden" name="pID" value="<?php echo $row['PID']; ?>">
+                            <button type="submit" class="btn" style="width:30%;">Nyertes kihirdetése</button>
+                            </form>
+                        <?php else: ?>
+                            <span style="color:green; display:inline-block; margin-top: 5px;">Nyertes kihirdetve</span>
+                        <?php endif; ?>
                     </td>
                 <?php endif; ?>
+
             </tr>
         <?php endwhile; ?>
         </tbody>

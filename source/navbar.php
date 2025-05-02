@@ -1,5 +1,6 @@
 <?php
 $is_logged_in = isset($_SESSION['user_id']);
+$is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin']; // Új változó az admin ellenőrzéshez
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -13,6 +14,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <?php if ($is_logged_in): ?>
             <a style="font-weight: bold;" href="profile.php?id=<?php echo $_SESSION['fID']; ?>">Profilom</a>
             <a style="font-weight: bold;" href="palyazatok.php">Pályázatok</a>
+            <?php if ($is_admin): ?>
+                <a style="font-weight: bold;" href="uj_admin.php">Új admin</a>
+            <?php endif; ?>
             <a style="font-weight: bold;" href="logout.php">Kijelentkezés</a>
         <?php else: ?>
             <?php if ($current_page === 'login.php'): ?>

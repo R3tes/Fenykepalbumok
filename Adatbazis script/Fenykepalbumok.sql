@@ -100,6 +100,24 @@ CREATE TABLE Tartalmaz (
     CONSTRAINT fk_aid2 FOREIGN KEY (aID) REFERENCES Album(aID) ON DELETE CASCADE,
     CONSTRAINT fk_kepid2 FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE
 );
+
+CREATE TABLE Szavazatok (
+    fID INT,
+    kepID INT,
+    pID INT,
+    PRIMARY KEY (fID, kepID, pID),
+    FOREIGN KEY (fID) REFERENCES Felhasznalo(fID),
+    FOREIGN KEY (kepID) REFERENCES Kep(kepID),
+    FOREIGN KEY (pID) REFERENCES Palyazat(pID)
+);
+
+CREATE TABLE Nyertesek (
+     pID INT PRIMARY KEY,
+     kepID INT,
+     FOREIGN KEY (pID) REFERENCES Palyazat(pID),
+     FOREIGN KEY (kepID) REFERENCES Kep(kepID)
+);
+
 -- Sequencek amik száomntartják a következő indexet
 CREATE SEQUENCE hely_seq
     START WITH 32
@@ -188,7 +206,6 @@ INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (27, 'Tata', 'Komarom-Esz
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (28, 'Szentgotthard', 'Vas', 'Magyarorszag');
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (29, 'Paks', 'Tolna', 'Magyarorszag');
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (30, 'Szombathely', 'Vas', 'Magyarorszag');
-
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (31, 'ValamiVaros', 'ValamiMegye', 'Magyarorszag');
 
 -- Képek tábla feltöltése

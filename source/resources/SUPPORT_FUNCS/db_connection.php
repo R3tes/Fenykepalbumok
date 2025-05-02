@@ -1,6 +1,6 @@
 <?php
-$username = 'aron';
-$password = '123';
+$username = '12345';
+$password = '12345';
 $connection_string = 'localhost/XE';
 
 $conn= oci_connect($username, $password, $connection_string);
