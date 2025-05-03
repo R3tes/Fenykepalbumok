@@ -43,6 +43,9 @@
                 <h2>
                 <?php echo $helyNev;?>
                 </h2>
+                <p style="text-align: center;">
+                    <?php echo '(képek: '.$numberOfPics.' db, összesített pontok: '.$points.' )';?>
+                </p>
             </div>
             <div class="gallery">
             <?php 

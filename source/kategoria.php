@@ -9,7 +9,10 @@ if (!isset($_GET['id'])) {
 
 $katID = intval($_GET['id']);
 
-$katQuery = "SELECT kategoriaNev FROM Kategoria WHERE katID = :katID";
+$katQuery = "SELECT kat.kategoriaNev, SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics 
+            FROM Kategoria kat INNER JOIN KategoriaResze kr ON kat.katID = kr.katID
+            INNER JOIN Kep k ON k.kepID = kr.kepID  
+            WHERE kat.katID = :katID GROUP BY kat.kategoriaNev";
 $katStmt = oci_parse($conn, $katQuery);
 oci_bind_by_name($katStmt, ":katID", $katID);
 oci_execute($katStmt);
@@ -19,7 +22,8 @@ if (!($katRow = oci_fetch_assoc($katStmt))) {
     exit();
 }
 $kategoriaNev = htmlspecialchars($katRow['KATEGORIANEV']);
-
+$points = $katRow["POINTS"];
+$numberOfPics = $katRow["NUMBEROFPICS"];
 $query = "
     SELECT k.kepID, k.kepNev, f.fNev,
            NVL((SELECT COUNT(*) FROM Likeok l WHERE l.kepID = k.kepID), 0) AS likeok
@@ -45,7 +49,10 @@ oci_execute($stmt);
 <?php include 'navbar.php'; ?>
 
 <div class="container-city-category">
-    <h1><?php echo $kategoriaNev; ?> képek</h1>
+    <h1 ><?php echo $kategoriaNev; ?> képek</h1>
+    <p >
+        <?php echo '(képek: '.$numberOfPics.' db, összesített pontok: '.$points.' )';?>
+    </p>
     <div class="grid-container">
         <?php
         while ($row = oci_fetch_assoc($stmt)) {

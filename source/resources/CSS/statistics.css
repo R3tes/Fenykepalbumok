@@ -1,0 +1,54 @@
+.tables {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem auto 0 auto;
+    padding-bottom: 5rem;
+}
+
+.subHeading {
+    background-color: #cccccc !important;
+    padding: 0.25rem !important;
+    
+}
+
+
+
+.statCategory {
+    text-align: center;
+    margin: 0 auto;
+    display: table;
+    width: 35%;
+    
+}
+
+.statCategory thead, tr {
+    display: table;
+    width: 100%;
+}
+
+.statCategory tbody {
+    display: block;
+    max-height: 10rem; /* Adjust height to control scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.statCategory * th{
+    background-color: #aaaaaa;
+    padding: 0.5rem;
+    width: 33%;
+    position: sticky;
+}
+
+.statCategory * td{
+    border-top: 1px solid #888888;
+    padding: 0.25rem;
+    width: 33%;
+}
+
+.statCategory * a{
+    text-decoration: none;
+    color: #000;
+}
+

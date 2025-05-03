@@ -4,8 +4,11 @@ include('resources/SUPPORT_FUNCS/db_connection.php');
 if (!isset($_SESSION["fID"])) {
     $_SESSION["fID"] = -1;
 }
+if (!isset($_SESSION["is_admin"])) {
+    $_SESSION["is_admin"] = false;
+}
 
-$fID = substr(explode('?', $_SERVER['REQUEST_URI'])[1], 3);
+$fID = $_GET["id"];
 
 if (isset($_POST['createAlbum'])) {
     if (isset($_SESSION['fID'])) {
@@ -143,93 +146,103 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <link rel="stylesheet" href="resources/CSS/styles.css">
     </head>
     <body>
-    <!--    <header>-->
-    <!--        <div class="menu">-->
-    <!--            --><?php //if(isset($_SESSION['fID'])): ?>
-    <!--                <a href="profile.php?id=-->
-    <?php //echo $_SESSION['fID'];?><!--" id="profileButton"><button class="interact">Profil</button></a>-->
-    <!--                <a href="logout.php" id="logoutButton"><button class="interact">Kijelentkezés</button></a>-->
-    <!--            --><?php //else:?><!--    -->
-    <!--                <a href="login.php" id="loginButton"><button class="interact">Bejelentkezés</button></a>-->
-    <!--            --><?php //endif; ?>
-    <!--        </div>-->
-    <!--    </header>-->
-
     <?php include 'navbar.php'; ?>
 
     <main>
-        <h1 class="title">
+        <div class="title">
+            <h1>
             <?php
-            $stmt = oci_parse($conn, "SELECT fNev FROM Felhasznalo WHERE fID = :fID");
-            oci_bind_by_name($stmt, ":fID", $fID);
-            if (oci_execute($stmt)) {
-                $row = oci_fetch_assoc($stmt);
-                echo $row["FNEV"];
-            } else {
-                $e = oci_error($stmt);
-                die("Database Error: " . $e['message']);
-            }
-            ?>
-        </h1>
-        <?php if ($_SESSION['fID'] == $fID): ?>
-            <div class="topArea">
-                <button onclick="openPopup()">Kép feltöltése</button>
-                <div id="uploadPopup" class="popup">
-                    <div class="popup-content">
-                        <span onclick="closePopup()" class="close">&times;</span>
-                        <form method="POST" enctype="multipart/form-data">
-                            <link rel="stylesheet" href="resources/CSS/upload.css">
-                            <div class="formHead">
-                                <h2>Fénykép feltöltése</h2>
-                            </div>
-
-                            <div class="uploadForm">
-
-                                <div class="drop-area">
-                                    <label for="fileInput">Válassza ki a feltöltendő képet:</label>
-                                    <input type="file" id="fileInput" name="uploadedFile" accept="image/*" required>
+                $stmt = oci_parse($conn, "SELECT f.fNev FROM Felhasznalo f WHERE f.fID = :fID");
+                oci_bind_by_name($stmt, ":fID", $fID);
+                if (oci_execute($stmt)) {
+                    $row = oci_fetch_assoc($stmt);
+                    echo $row["FNEV"];
+                } else {
+                    $e = oci_error($stmt);
+                    die("Database Error: " . $e['message']);
+                }
+                ?>
+            </h1>
+            <p>
+                <?php
+                    $stmt = oci_parse($conn, "SELECT SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics FROM Kep k WHERE k.fID = :fID");
+                    oci_bind_by_name($stmt, ":fID", $fID);
+                    
+                    if (oci_execute($stmt)) {
+                        $row = oci_fetch_assoc($stmt);
+                        echo '(képek: '.$row["NUMBEROFPICS"].' db, összesített pontok: '.$row["POINTS"].' )';
+                    } else {
+                        $e = oci_error($stmt);
+                        die("Database Error: " . $e['message']);
+                    }
+                    
+                ?>
+            </p>
+        </div>
+        <?php if ($_SESSION['fID'] == $fID || $_SESSION['is_admin']): ?>
+            <?php if ($_SESSION['fID'] == $fID): ?>
+                <div class="topArea">
+                    <button onclick="openPopup()">Kép feltöltése</button>
+                    <div id="uploadPopup" class="popup">
+                        <div class="popup-content">
+                            <span onclick="closePopup()" class="close">&times;</span>
+                            <form method="POST" enctype="multipart/form-data">
+                                <link rel="stylesheet" href="resources/CSS/upload.css">
+                                <div class="formHead">
+                                    <h2>Fénykép feltöltése</h2>
                                 </div>
-                                <div class="formElement">
-                                    <label for="nameInput">Név:</label>
-                                    <input id="nameInput" name="name" required>
-                                    <label for="place">Hely:</label>
-                                    <div id="place">
-                                        <input id="country" name="country" placeholder="Ország">
-                                        <input id="county" name="county" placeholder="Megye">
-                                        <input id="city" name="city" placeholder="Város">
+                
+                                <div class="uploadForm">
+                
+                                    <div class="drop-area">
+                                        <label for="fileInput">Válassza ki a feltöltendő képet:</label>
+                                        <input type="file" id="fileInput" name="uploadedFile" accept="image/*" required>
                                     </div>
-                                    <label for="categoryInput">Kategória:</label>
-                                    <input list="categories" id="categoryInput" name="categories" required>
-                                    <button type="submit">Feltöltés</button>
+                                    <div class="formElement">
+                                        <label for="nameInput">Név:</label>
+                                        <input id="nameInput" name="name" required>
+                                        <label for="place">Hely:</label>
+                                        <div id="place">
+                                            <input id="country" name="country" placeholder="Ország">
+                                            <input id="county" name="county" placeholder="Megye">
+                                            <input id="city" name="city" placeholder="Város">
+                                        </div>
+                                        <label for="categoryInput">Kategória:</label>
+                                        <input list="categories" id="categoryInput" name="categories" placeholder="kategoria1 kategoria2..." required>
+                                        <button type="submit">Feltöltés</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
-
-                <button onclick="openAlbumPopup()">Új Album létrehozása</button>
-                <div id="albumPopup" class="popup">
-                    <div class="popup-content">
-                        <span onclick="closeAlbumPopup()" class="close">&times;</span>
-                        <form method="POST">
-                            <link rel="stylesheet" href="resources/CSS/upload.css">
-                            <div class="formHead">
-                                <h2>Új Album Létrehozása</h2>
-                            </div>
-
-                            <div class="uploadForm">
-                                <div class="formElement">
-                                    <label for="albumNameInput">Album neve:</label>
-                                    <input id="albumNameInput" name="albumName" required>
-                                    <button type="submit" name="createAlbum">Létrehozás</button>
+                
+                    <button onclick="openAlbumPopup()">Új Album létrehozása</button>
+                    <div id="albumPopup" class="popup">
+                        <div class="popup-content">
+                            <span onclick="closeAlbumPopup()" class="close">&times;</span>
+                            <form method="POST">
+                                <link rel="stylesheet" href="resources/CSS/upload.css">
+                                <div class="formHead">
+                                    <h2>Új Album Létrehozása</h2>
                                 </div>
-                            </div>
-                        </form>
+                
+                                <div class="uploadForm">
+                                    <div class="formElement">
+                                        <label for="albumNameInput">Album neve:</label>
+                                        <input id="albumNameInput" name="albumName" required>
+                                        <button type="submit" name="createAlbum">Létrehozás</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
+                    
+                    <a href="modifyProfile.php" id="profileButton">
+                        <button class="interact">Módosítás</button>
+                    </a>
+            
                 </div>
-
-            </div>
-        <?php endif; ?>
+            <?php endif; ?>
 
         <div class="content">
             <div class="title">
@@ -282,7 +295,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php endwhile; ?>
             </div>
 
-
+            <?php endif; ?>
             <div class="title">
                 <h2>
                     Képek
@@ -324,11 +337,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
         <?php if ($_SESSION['fID'] == $fID): ?>
-            <div class="accountControls">
-                <a href="modifyProfile.php" id="profileButton">
-                    <button class="interact">Módosítás</button>
-                </a>
-            </div>
+            
         <?php endif; ?>
 
     </main>

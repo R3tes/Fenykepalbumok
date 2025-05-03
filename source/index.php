@@ -20,10 +20,15 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
     <aside class="sidebar">
         <h2>Ranglista</h2>
         <ol>
-            <li>Felhasználó 1</li>
-            <li>Felhasználó 2</li>
-            <li>Felhasználó 3</li>
+            <?php 
+                $stmt = oci_parse($conn, "SELECT f.fID, f.fNev, SUM(k.ertekeles) AS points FROM Felhasznalo f INNER JOIN Kep k ON k.fID = f.fID GROUP BY f.fNev, f.fID ORDER BY points DESC");
+                oci_execute($stmt);
+                while ($row = oci_fetch_assoc($stmt)) {
+                    echo '<li><a href="profile.php?id='.$row["FID"].'">'.$row["FNEV"].': '.$row["POINTS"].' 👍</a></li>';
+                }
+            ?>
         </ol>
+        <a href="statistics.php"><Button>Statisztikák</Button></a>
     </aside>
 
     <main class="content">
@@ -111,6 +116,7 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
 
                     while ($row = oci_fetch_assoc($stmt)) {
                         $varosNev = htmlspecialchars($row['VAROS']);
+                        $helyID = $row['HELYID'];
                         $kepszam = $row['KEPSZAM'];
 
                         $kepPath = 'resources/APP_IMGS/placeholder.png';
@@ -125,7 +131,7 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
                             }
                         }
 
-                        echo '<a href="varos.php?varos=' . urlencode($varosNev) . '" class="grid-item" style="text-decoration: none; color: inherit;">';
+                        echo '<a href="varos.php?id=' . urlencode($helyID) . '" class="grid-item" style="text-decoration: none; color: inherit;">';
                         echo '<div>';
                         echo '<img src="' . $kepPath . '" alt="Város" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px;">';
                         echo "<div style='font-weight: bold'>{$varosNev} ({$kepszam})</div>";

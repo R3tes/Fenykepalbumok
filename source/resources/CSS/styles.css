@@ -4,12 +4,6 @@ body{
     font-family: Arial, sans-serif;
 }
 
-.menu{
-    background-color: #132020;
-    padding: 15px;
-    text-align: end;
-}
-
 button{
     padding: 8px 16px;
     background-color: #66dbdb;
@@ -66,4 +60,10 @@ button{
 .imageInfo h3 {
     font-size: 20px;
     margin-bottom: 8px;
+}
+
+.topArea {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
 }

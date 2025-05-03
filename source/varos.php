@@ -2,22 +2,46 @@
 session_start();
 require_once 'resources/SUPPORT_FUNCS/db_connection.php';
 
-if (!isset($_GET['varos'])) {
+if (!isset($_GET['id'])) {
     echo "Nincs megadva város.";
     exit();
 }
 
-$varosNev = $_GET['varos'];
+$helyID = $_GET['id'];
+
+$query = "SELECT h.varos, COUNT(k.kepID) AS count, SUM(k.ertekeles) AS sum
+FROM Hely h
+LEFT JOIN Kep k ON k.helyID = h.helyID
+WHERE h.helyID = :helyID
+GROUP BY h.varos";
+
+$stmt = oci_parse($conn, $query);
+oci_bind_by_name($stmt, ":helyID", $helyID);
+
+$varosNev = "";
+$count = 0;
+$sum = 0;
+if(oci_execute($stmt)){
+    if($row = oci_fetch_assoc($stmt)){
+        $varosNev = $row["VAROS"];
+        $count = $row["COUNT"];
+        $sum = $row["SUM"];
+    }
+} else {
+    $e = oci_error($stmt);
+    die("Database Error: " . $e['message']);
+}
+
 
 $query = "SELECT k.kepID, k.kepNev, f.fNev, k.ertekeles
 FROM Kep k
 JOIN Felhasznalo f ON k.fID = f.fID
 JOIN Hely h ON k.helyID = h.helyID
-WHERE h.varos = :varosNev
+WHERE h.helyID = :helyID
 ORDER BY k.ertekeles DESC";
 
 $stmt = oci_parse($conn, $query);
-oci_bind_by_name($stmt, ":varosNev", $varosNev);
+oci_bind_by_name($stmt, ":helyID", $helyID);
 oci_execute($stmt);
 ?>
 
@@ -34,6 +58,7 @@ oci_execute($stmt);
 
 <div class="container-city-category">
     <h1><?php echo htmlspecialchars($varosNev); ?> képei</h1>
+    <p><?php echo '(képek: '.$count.' db, összesített pontok: '.$sum.' )';?></p>
     <div class="grid-container">
         <?php
         while ($row = oci_fetch_assoc($stmt)) {

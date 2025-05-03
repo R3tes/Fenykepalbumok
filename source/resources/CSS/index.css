@@ -102,6 +102,11 @@ body {
     padding-left: 20px;
 }
 
+.sidebar * a{
+    text-decoration: none;
+    color: #000000;
+}
+
 .content {
     flex: 1;
     padding: 20px;

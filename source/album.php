@@ -118,7 +118,23 @@ if (isset($_POST['addPhotosToAlbum'])) {
 </div>
 
 <div class="container-album">
-    <h2 style="text-align: center;"><?php echo $albumNev; ?></h2>
+    <h2><?php echo $albumNev; ?></h2>
+    <p>
+        <?php
+            $stmt = oci_parse($conn, "SELECT SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics 
+                                    FROM Album a INNER JOIN Tartalmaz t ON a.aID = t.aID
+                                    INNER JOIN Kep k ON k.kepID = t.kepID 
+                                    WHERE a.aID = :aID");
+            oci_bind_by_name($stmt, ":aID", $albumID);
+            if (oci_execute($stmt)) {
+                $row = oci_fetch_assoc($stmt);
+                echo '(képek: '.$row["NUMBEROFPICS"].' db, összesített pontok: '.$row["POINTS"].' )';
+            } else {
+                $e = oci_error($stmt);
+                die("Database Error: " . $e['message']);
+            }
+        ?>
+    </p>
     <div class="grid-container">
         <?php
         $query = "

@@ -88,21 +88,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil módosítása</title>
-<!--    <link rel="icon" href="../images/icon.png" type="image/x-icon">-->
     <link rel="stylesheet" href="resources/CSS/styles.css">
     <link rel="stylesheet" href="resources/CSS/upload.css">
 </head>
 <body>
-<!--    <header>-->
-<!--        <div class="menu">-->
-<!--        --><?php //if(isset($_SESSION['fID'])): ?>
-<!--                <a href="profile.php?id=--><?php //echo $_SESSION['fID'];?><!--" id="profileButton"><button class="interact">Profil</button></a>-->
-<!--                <a href="logout.php" id="logoutButton"><button class="interact">Kijelentkezés</button></a>-->
-<!--            --><?php //else:?><!--    -->
-<!--                <a href="login.php" id="loginButton"><button class="interact">Bejelentkezés</button></a>-->
-<!--            --><?php //endif; ?>
-<!--        </div>-->
-<!--    </header>-->
 <?php include 'navbar.php'; ?>
     <main>
         <form method="POST">
