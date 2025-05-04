@@ -5,7 +5,8 @@ CREATE TABLE Felhasznalo (
     email VARCHAR2(128) UNIQUE NOT NULL,
     jelszo VARCHAR2(128) NOT NULL,
     profilkep VARCHAR2(128),
-    jogosultsag VARCHAR2(32) NOT NULL
+    jogosultsag VARCHAR2(32) NOT NULL,
+    created_at DATE
 );
 
 -- Album tábla létrehozása
@@ -32,9 +33,9 @@ CREATE TABLE Kep (
     ertekeles INT DEFAULT 0,
     fID INT NOT NULL,
     helyID INT,
-    CONSTRAINT fk_felhasznalo FOREIGN KEY (fID) 
+    CONSTRAINT fk_felhasznalo FOREIGN KEY (fID)
         REFERENCES Felhasznalo(fID) ON DELETE CASCADE,
-    CONSTRAINT fk_hely FOREIGN KEY (helyID) 
+    CONSTRAINT fk_hely FOREIGN KEY (helyID)
         REFERENCES Hely(helyID) ON DELETE SET NULL
 );
 
@@ -71,9 +72,9 @@ CREATE TABLE Nevezett (
     pID INT,
     pont INT DEFAULT 0,
     PRIMARY KEY (kepID, pID),
-    CONSTRAINT fk_kep FOREIGN KEY (kepID) 
+    CONSTRAINT fk_kep FOREIGN KEY (kepID)
         REFERENCES Kep(kepID) ON DELETE CASCADE,
-    CONSTRAINT fk_palyazat FOREIGN KEY (pID) 
+    CONSTRAINT fk_palyazat FOREIGN KEY (pID)
         REFERENCES Palyazat(pID) ON DELETE CASCADE
 );
 
@@ -118,29 +119,37 @@ CREATE TABLE Nyertesek (
      FOREIGN KEY (kepID) REFERENCES Kep(kepID)
 );
 
+CREATE TABLE SessionNaplo (
+        id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        felhasznalo_id NUMBER NOT NULL,
+        belepes_ideje DATE DEFAULT SYSDATE,
+        kilepes_ideje DATE,
+        FOREIGN KEY (felhasznalo_id) REFERENCES Felhasznalo(fID)
+);
+
 -- Sequencek amik száomntartják a következő indexet
 CREATE SEQUENCE hely_seq
     START WITH 32
-    INCREMENT BY 1 
-    NOCACHE  
-    NOCYCLE; 
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
 
 CREATE SEQUENCE kat_seq
     START WITH 42
-    INCREMENT BY 1  
-    NOCACHE  
+    INCREMENT BY 1
+    NOCACHE
     NOCYCLE;
 
 CREATE SEQUENCE kep_seq
     START WITH 24
-    INCREMENT BY 1  
-    NOCACHE  
+    INCREMENT BY 1
+    NOCACHE
     NOCYCLE;
 
 CREATE SEQUENCE felhasznalo_seq
     START WITH 13
-    INCREMENT BY 1  
-    NOCACHE  
+    INCREMENT BY 1
+    NOCACHE
     NOCYCLE;
 
 CREATE SEQUENCE palyazat_seq
@@ -148,20 +157,28 @@ CREATE SEQUENCE palyazat_seq
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
-    
+
 CREATE SEQUENCE hozzaszolas_seq
     START WITH 11
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
-    
+
 CREATE SEQUENCE album_seq
     START WITH 11
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
 
--- Felhasználó tábla feltöltése (jelszó: 12345, hashelve)
+CREATE OR REPLACE TRIGGER trg_insert_felhasznalo
+BEFORE INSERT ON Felhasznalo
+FOR EACH ROW
+BEGIN
+    :NEW.created_at := SYSDATE;
+END;
+/
+
+-- Felhasználó tábla feltöltése
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (1, 'Kiss Anna', 'anna.kiss@gmail.com', '12345', 'felhasznalo');
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (2, 'Nagy Péter', 'pnagy84@yahoo.com', '12345', 'admin');
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (3, 'Tóth Eszter', 'eszter.t@hotmail.com', '12345', 'felhasznalo');

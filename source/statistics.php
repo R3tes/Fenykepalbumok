@@ -163,6 +163,86 @@ include('resources/SUPPORT_FUNCS/db_connection.php');
                 ?>
             </tbody>
         </table>
+        <table class="statCategory">
+            <thead>
+            <tr>
+                <th colspan="2">
+                    Legaktívabb felhasználók:
+                </th>
+            </tr>
+            <tr>
+                <th class="subHeading">Név</th>
+                <th class="subHeading">Összes idő (perc)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            $stmt = oci_parse($conn, "
+
+                    SELECT f.fNev, 
+                            ROUND(SUM(
+           (CAST(s.kilepes_ideje AS DATE) - CAST(s.belepes_ideje AS DATE)) * 1440
+       ), 0) AS percek
+                    FROM SessionNaplo s
+                    JOIN Felhasznalo f ON s.felhasznalo_id = f.fID
+                    GROUP BY f.fNev
+                    ORDER BY percek DESC
+                    FETCH FIRST 10 ROWS ONLY
+                    
+                ");
+            if (oci_execute($stmt)) {
+                while($row = oci_fetch_assoc($stmt)) {
+                    echo '<tr>
+                                <td>' . htmlspecialchars($row["FNEV"]) . '</td>
+                                <td>' . htmlspecialchars($row["PERCEK"]) . ' perc</td>
+                              </tr>';
+                }
+            } else {
+                $e = oci_error($stmt);
+                echo '<tr><td colspan="2">Hiba a lekérdezésben: ' . htmlspecialchars($e['message']) . '</td></tr>';
+            }
+            ?>
+            </tbody>
+        </table>
+        <table class="statCategory">
+            <thead>
+            <tr>
+                <th colspan="2">
+                    Legtöbb pályázatot nyert felhasználók:
+                </th>
+            </tr>
+            <tr>
+                <th class="subHeading">Név</th>
+                <th class="subHeading">Nyert Pályázatok</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            // Lekérdezzük a legtöbb pályázatot nyert felhasználókat
+            $stmt = oci_parse($conn, "
+    SELECT f.fNev AS FelhasznaloNev, COUNT(n.pID) AS NyertPalyazatok
+    FROM Felhasznalo f
+    JOIN Kep k ON f.fID = k.fID
+    JOIN Nevezett n ON k.kepID = n.kepID
+    JOIN Nyertesek ny ON n.pID = ny.pID AND n.kepID = ny.kepID
+    GROUP BY f.fNev
+    ORDER BY NyertPalyazatok DESC
+");
+            if (oci_execute($stmt)) {
+                while ($row = oci_fetch_assoc($stmt)) {
+                    echo '<tr>
+            <td>' . htmlspecialchars($row["FELHASZNALONEV"]) . '</td> <!-- Helyes alias -->
+            <td>' . htmlspecialchars($row["NYERTPALYAZATOK"]) . '</td> <!-- Helyes alias -->
+        </tr>';
+                }
+            } else {
+                $e = oci_error($stmt);
+                echo '<tr><td colspan="2">Hiba a lekérdezésben: ' . htmlspecialchars($e['message']) . '</td></tr>';
+            }
+
+            ?>
+            </tbody>
+        </table>
     </div>
 </main>
 </body>

@@ -161,6 +161,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $e = oci_error($stmt);
                     die("Database Error: " . $e['message']);
                 }
+            $stmt = oci_parse($conn, "SELECT TO_CHAR(f.created_at, 'YYYY-MM-DD') AS regDatum FROM Felhasznalo f WHERE f.fID = :fID");
+            oci_bind_by_name($stmt, ":fID", $fID);
+            if (oci_execute($stmt)) {
+                $row = oci_fetch_assoc($stmt);
+                if ($row) { // Check if the result is valid
+                    $regDatum = $row["REGDATUM"];
+                    echo "<p>Regisztráció dátuma: $regDatum</p>";
+                } else {
+                    echo "<p>No registration date found.</p>";
+                }
+            } else {
+                $e = oci_error($stmt);
+                die("Database Error: " . $e['message']);
+            }
                 ?>
             </h1>
             <p>

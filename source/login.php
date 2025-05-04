@@ -28,6 +28,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $_SESSION['login_success'] = "Sikeres bejelentkezés. Üdvözlünk, " . htmlspecialchars($row['FNEV']) . "!";
 
+                $naplo_stmt = oci_parse($conn, "INSERT INTO SessionNaplo (felhasznalo_id, belepes_ideje) VALUES (:fid, SYSDATE)");
+                oci_bind_by_name($naplo_stmt, ":fid", $row['FID']);
+                if (!oci_execute($naplo_stmt)) {
+                    $e = oci_error($naplo_stmt);
+                    error_log("SessionNaplo beszúrási hiba: " . $e['message']);
+                }
+                oci_free_statement($naplo_stmt);
+
                 header("Location: index.php");
                 exit;
             } else {
