@@ -9,10 +9,14 @@ if (!isset($_GET['id'])) {
 
 $katID = intval($_GET['id']);
 
-$katQuery = "SELECT kat.kategoriaNev, SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics 
-            FROM Kategoria kat INNER JOIN KategoriaResze kr ON kat.katID = kr.katID
-            INNER JOIN Kep k ON k.kepID = kr.kepID  
-            WHERE kat.katID = :katID GROUP BY kat.kategoriaNev";
+$katQuery = "SELECT kat.kategoriaNev, 
+           NVL(SUM(k.ertekeles), 0) AS points, 
+           COUNT(k.kepID) AS numberOfPics 
+    FROM Kategoria kat
+    LEFT JOIN KategoriaResze kr ON kat.katID = kr.katID
+    LEFT JOIN Kep k ON k.kepID = kr.kepID
+    WHERE kat.katID = :katID
+    GROUP BY kat.kategoriaNev";
 $katStmt = oci_parse($conn, $katQuery);
 oci_bind_by_name($katStmt, ":katID", $katID);
 oci_execute($katStmt);
@@ -21,7 +25,7 @@ if (!($katRow = oci_fetch_assoc($katStmt))) {
     echo "Nem található ilyen kategória.";
     exit();
 }
-$kategoriaNev = htmlspecialchars($katRow['KATEGORIANEV']);
+$kategoriaNev = htmlspecialchars($katRow['KATEGORIANEV'], ENT_QUOTES, 'UTF-8');
 $points = $katRow["POINTS"];
 $numberOfPics = $katRow["NUMBEROFPICS"];
 $query = "
@@ -49,15 +53,15 @@ oci_execute($stmt);
 <?php include 'navbar.php'; ?>
 
 <div class="container-city-category">
-    <h1 ><?php echo $kategoriaNev; ?> képek</h1>
-    <p >
-        <?php echo '(képek: '.$numberOfPics.' db, összesített pontok: '.$points.' )';?>
+    <h1><?php echo $kategoriaNev; ?> képek</h1>
+    <p>
+        <?php echo '(képek: ' . $numberOfPics . ' db, összesített pontok: ' . $points . ' )'; ?>
     </p>
     <div class="grid-container">
         <?php
         while ($row = oci_fetch_assoc($stmt)) {
-            $kepNev = htmlspecialchars($row['KEPNEV']);
-            $felhasznaloNev = htmlspecialchars($row['FNEV']);
+            $kepNev = htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8');
+            $felhasznaloNev = htmlspecialchars($row['FNEV'], ENT_QUOTES, 'UTF-8');
             $likeok = $row['LIKEOK'];
 
             $dir = 'resources/APP_IMGS';

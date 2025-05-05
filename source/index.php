@@ -55,7 +55,7 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
                     oci_execute($stmt);
 
                     while ($row = oci_fetch_assoc($stmt)) {
-                        $kategoriaNev = htmlspecialchars($row['KATEGORIANEV']);
+                        $kategoriaNev = htmlspecialchars($row['KATEGORIANEV'], ENT_QUOTES, 'UTF-8');
                         $kepszam = $row['KEPSZAM'];
                         $kategoriaID = $row['KATID'];
 
@@ -115,7 +115,7 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
                     oci_execute($stmt);
 
                     while ($row = oci_fetch_assoc($stmt)) {
-                        $varosNev = htmlspecialchars($row['VAROS']);
+                        $varosNev = htmlspecialchars($row['VAROS'], ENT_QUOTES, 'UTF-8');
                         $helyID = $row['HELYID'];
                         $kepszam = $row['KEPSZAM'];
 

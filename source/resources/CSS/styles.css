@@ -8,11 +8,36 @@ button{
     padding: 8px 16px;
     background-color: #66dbdb;
     border: none;
+    /*max-width: 50%;*/
     border-radius: 4px;
     color: #232F3E;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s;
+}
+
+.photo-del-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.photo-del-option {
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.photo-del-option.selected {
+    opacity: 0.4;
+    border-color: #40ff15;
+}
+
+.photo-del-option img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
 }
 
 .title{

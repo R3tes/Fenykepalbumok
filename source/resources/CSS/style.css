@@ -19,6 +19,21 @@ form, .palyazat {
     margin: 10% auto;
 }
 
+.disabled-btn {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 300px;
+
+    margin: 2% auto;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
 input[type="text"],
 input[type="password"],
 input[type="email"] {
@@ -42,7 +57,16 @@ input[type="submit"] {
 
 button:hover,
 input[type="submit"]:hover {
-    background-color: #45a049;
+    background-color: #007bff;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    background-color: #ccc;
 }
 
 h2 {

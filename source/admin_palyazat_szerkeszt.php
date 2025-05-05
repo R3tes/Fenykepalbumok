@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h2>Pályázat szerkesztése</h2>
 
     <label for="palyazatNev">Pályázat neve:</label>
-    <input type="text" name="palyazatNev" value="<?php echo htmlspecialchars($palyazatNev); ?>" required>
+    <input type="text" name="palyazatNev" value="<?php echo htmlspecialchars($palyazatNev, ENT_QUOTES, 'UTF-8'); ?>" required>
 
     <input type="submit" value="Mentés">
 

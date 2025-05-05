@@ -48,3 +48,21 @@ function togglePhotoSelection(elem) {
     const ids = selected.map(el => el.dataset.kepid);
     document.getElementById("selectedPhotos").value = ids.join(",");
 }
+
+function openDeletePhotoPopup() {
+    document.getElementById('deletePhotoPopup').style.display = 'block';
+}
+function closeDeletePhotoPopup() {
+    document.getElementById('deletePhotoPopup').style.display = 'none';
+}
+function updateSelectedPhotosForDeletion() {
+    const selected = document.querySelectorAll('.photo-del-option.selected');
+    const ids = Array.from(selected).map(div => div.getAttribute('data-kepid'));
+    document.getElementById('selectedPhotos').value = ids.join(',');
+
+    return true;
+}
+
+function openDeleteAlbumPopup() {
+    document.getElementById('deleteAlbumPopup').style.display = 'block';
+}

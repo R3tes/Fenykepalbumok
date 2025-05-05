@@ -90,6 +90,7 @@
     <title>Profil módosítása</title>
     <link rel="stylesheet" href="resources/CSS/styles.css">
     <link rel="stylesheet" href="resources/CSS/upload.css">
+    <link rel="stylesheet" href="resources/CSS/navbar.css">
 </head>
 <body>
 <?php include 'navbar.php'; ?>
