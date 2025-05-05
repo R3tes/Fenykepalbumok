@@ -25,10 +25,10 @@ oci_bind_by_name($stmt, ":kepID", $kepID);
 oci_execute($stmt);
 
 if ($row = oci_fetch_assoc($stmt)) {
-    $kepNev = htmlspecialchars($row['KEPNEV']);
-    $feltolto = htmlspecialchars($row['FELHASZNALONEV']);
+    $kepNev = htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8');
     $feltoltoID = $row['FID'];
-    $varos = htmlspecialchars($row['VAROS']);
+    $feltolto = htmlspecialchars($row['FELHASZNALONEV'], ENT_QUOTES, 'UTF-8');
+    $varos = htmlspecialchars($row['VAROS'], ENT_QUOTES, 'UTF-8');
     $ertekeles = $row['ERTEKELES'];
     $canEdit = $isAdmin || ($fID !== null && $fID == $feltoltoID);
 
@@ -173,8 +173,8 @@ if (isset($_SESSION['fID'])) {
 
                 while ($komment = oci_fetch_assoc($kommentStmt)) {
                     $hasComment = true;
-                    $nev = htmlspecialchars($komment['FNEV']);
-                    $tartalom = htmlspecialchars($komment['TARTALOM']);
+                    $nev = htmlspecialchars($komment['FNEV'], ENT_QUOTES, 'UTF-8');
+                    $tartalom = htmlspecialchars($komment['TARTALOM'], ENT_QUOTES, 'UTF-8');
                     echo "
                     <div class='comment'>
                         <div class='comment-user'>$nev</div>
