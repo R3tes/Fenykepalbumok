@@ -6,25 +6,28 @@ Célunk egy olyan platform létrehozása, ahol a fényképészek támogathatják
 
 Adatbázis tábla törlési sorrend:
 
-DROP TABLE KategoriaResze; <br>
-DROP TABLE Kategoria; <br>
-DROP TABLE Nevezett; <br>
-DROP TABLE Palyazat; <br>
-DROP TABLE Hozzaszolas; <br>
-DROP TABLE Tartalmaz; <br>
-DROP TABLE Likeok; <br>
-DROP TABLE Kep; <br>
-DROP TABLE Hely; <br>
-DROP TABLE Album; <br>
-DROP TABLE Felhasznalo; <br>
+DROP TABLE SessionNaplo; <br>
+DROP TABLE Nyertesek;<br>
+DROP TABLE Szavazatok;<br>
+DROP TABLE Tartalmaz;<br>
+DROP TABLE KategoriaResze;<br>
+DROP TABLE Kategoria;<br>
+DROP TABLE Nevezett;<br>
+DROP TABLE Palyazat;<br>
+DROP TABLE Hozzaszolas;<br>
+DROP TABLE Likeok;<br>
+DROP TABLE Kep;<br>
+DROP TABLE Hely;<br>
+DROP TABLE Album;<br>
+DROP TABLE Felhasznalo;<br>
 
 DROP SEQUENCE hely_seq;<br>
 DROP SEQUENCE kat_seq;<br>
 DROP SEQUENCE kep_seq;<br>
 DROP SEQUENCE felhasznalo_seq;<br>
 DROP SEQUENCE palyazat_seq;<br>
-DROP SEQUENCE album_seq; <br>
-DROP SEQUENCE hozzaszolas_seq; <br>
+DROP SEQUENCE hozzaszolas_seq;<br>
+DROP SEQUENCE album_seq;<br>
 
 ## Fontos!!
 - legelső lépéssként le kell futtatni a setup filet hogy a hashelt jelszavak rendbe legyenek az előre insertelt felhasználóknál
