@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['is_admin'] = $row['JOGOSULTSAG'] === 'admin';
                 $_SESSION['user_id'] = $email;
 
-                $_SESSION['login_success'] = "Sikeres bejelentkezés. Üdvözlünk, " . htmlspecialchars($row['FNEV']) . "!";
+                $_SESSION['login_success'] = "Sikeres bejelentkezés. Üdvözlünk, " . htmlspecialchars($row['FNEV'], ENT_QUOTES, 'UTF-8') . "!";
 
                 $naplo_stmt = oci_parse($conn, "INSERT INTO SessionNaplo (felhasznalo_id, belepes_ideje) VALUES (:fid, SYSDATE)");
                 oci_bind_by_name($naplo_stmt, ":fid", $row['FID']);

@@ -49,7 +49,7 @@ oci_execute($stmt);
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo htmlspecialchars($varosNev); ?> képei</title>
+    <title><?php echo htmlspecialchars($varosNev, ENT_QUOTES, 'UTF-8'); ?> képei</title>
     <link rel="stylesheet" href="resources/CSS/index.css">
 </head>
 <body style="">
@@ -57,13 +57,13 @@ oci_execute($stmt);
 <?php include 'navbar.php'; ?>
 
 <div class="container-city-category">
-    <h1><?php echo htmlspecialchars($varosNev); ?> képei</h1>
+    <h1><?php echo htmlspecialchars($varosNev, ENT_QUOTES, 'UTF-8'); ?> képei</h1>
     <p><?php echo '(képek: '.$count.' db, összesített pontok: '.$sum.' )';?></p>
     <div class="grid-container">
         <?php
         while ($row = oci_fetch_assoc($stmt)) {
-            $kepNev = htmlspecialchars($row['KEPNEV']);
-            $felhasznaloNev = htmlspecialchars($row['FNEV']);
+            $kepNev = htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8');
+            $felhasznaloNev = htmlspecialchars($row['FNEV'], ENT_QUOTES, 'UTF-8');
             $likeok = $row['ERTEKELES'];
 
             $dir = 'resources/APP_IMGS';

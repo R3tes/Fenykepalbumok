@@ -53,12 +53,12 @@ oci_execute($stmt);
             <tr>
                 <td>
                     <a href="palyazat_kepek.php?id=<?php echo $row['PID']; ?>">
-                        <?php echo htmlspecialchars($row['PALYAZATNEV']); ?>
+                        <?php echo htmlspecialchars($row['PALYAZATNEV'], ENT_QUOTES, 'UTF-8'); ?>
                     </a>
                 </td>
                 <td>
                     <?php
-                    if (!$is_admin) {
+//                    if (!$is_admin) {
                         $nyertesQuery = "SELECT COUNT(*) AS CNT FROM Nyertesek WHERE pID = :pID";
                         $nyertesStmt = oci_parse($conn, $nyertesQuery);
                         oci_bind_by_name($nyertesStmt, ":pID", $row['PID']);
@@ -72,7 +72,7 @@ oci_execute($stmt);
                         <?php else: ?>
                             <span style="color:gray;">Lezárt</span>
                         <?php endif;
-                    }
+//                    }
                     ?>
                 </td>
 

@@ -55,13 +55,13 @@ oci_execute($stmt);
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo htmlspecialchars($palyazatNev); ?> - Képek</title>
+    <title><?php echo htmlspecialchars($palyazatNev, ENT_QUOTES, 'UTF-8'); ?> - Képek</title>
     <link rel="stylesheet" href="resources/CSS/style.css">
 </head>
 <body>
 <?php include 'navbar.php'; ?>
 <div class="container">
-    <h1><?php echo htmlspecialchars($palyazatNev); ?> - Képek</h1>
+    <h1><?php echo htmlspecialchars($palyazatNev, ENT_QUOTES, 'UTF-8'); ?> - Képek</h1>
 
     <?php if (isset($_SESSION['success_message'])): ?>
         <p style="color: green;"><?php echo $_SESSION['success_message']; unset($_SESSION['success_message']); ?></p>
@@ -73,23 +73,23 @@ oci_execute($stmt);
 
     <div class="gallery">
         <?php while ($row = oci_fetch_assoc($stmt)): ?>
-            <div class="image-card">
-                <img src="<?php
-                $dir = "resources/APP_IMGS/PICS";
+            <div class="image-card" >
+                <img style="max-width: 80%; height: auto; border-radius: 12px; margin-left: 10%" src="<?php
+                $dir = "resources/APP_IMGS/";
                 $files = scandir($dir);
                 $found = false;
                 foreach ($files as $file) {
                     if (fnmatch($row['KEPNEV'] . ".*", $file)) {
-                        echo "resources/APP_IMGS/PICS/" . $file;
+                        echo "resources/APP_IMGS/" . $file;
                         $found = true;
                         break;
                     }
                 }
-                if (!$found) echo "resources/APP_IMGS/PICS/placeholder.jpg";
-                ?>" alt="<?php echo htmlspecialchars($row['KEPNEV']); ?>">
+                if (!$found) echo "resources/APP_IMGS/placeholder.png";
+                ?>" alt="<?php echo htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8'); ?>">
 
                 <div class="imageInfo">
-                    <h3><?php echo htmlspecialchars($row['KEPNEV']); ?></h3>
+                    <h3>Kép címe: <?php echo htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8'); ?></h3>
                     <p>Szavazatok: <?php echo $row['PONT']; ?></p>
 
                     <?php if ($nyertesKepID && $nyertesKepID == $row['KEPID']): ?>
@@ -104,7 +104,9 @@ oci_execute($stmt);
                                 <button type="submit" class="btn">Szavazás</button>
                             </form>
                         <?php elseif ($fID): ?>
-                            <button class="btn" disabled>Szavazat leadva</button>
+                            <div class="disabled-btn">
+                                <button class="btn" disabled>Szavazat leadva</button>
+                            </div>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>

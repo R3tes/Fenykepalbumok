@@ -4,7 +4,6 @@ CREATE TABLE Felhasznalo (
     fNev VARCHAR2(32) NOT NULL,
     email VARCHAR2(128) UNIQUE NOT NULL,
     jelszo VARCHAR2(128) NOT NULL,
-    profilkep VARCHAR2(128),
     jogosultsag VARCHAR2(32) NOT NULL,
     created_at DATE
 );
@@ -222,7 +221,7 @@ INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (26, 'Nagykáta', 'Pest',
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (27, 'Tata', 'Komarom-Esztergom', 'Magyarorszag');
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (28, 'Szentgotthard', 'Vas', 'Magyarorszag');
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (29, 'Paks', 'Tolna', 'Magyarorszag');
-INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (30, 'Szombathely', 'Vas', 'Magyarorszag');
+INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (30, 'Sárvár', 'Vas', 'Magyarorszag');
 INSERT INTO Hely (helyID, varos, megye, orszag) VALUES (31, 'ValamiVaros', 'ValamiMegye', 'Magyarorszag');
 
 -- Képek tábla feltöltése

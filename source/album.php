@@ -7,25 +7,38 @@ if (!isset($_SESSION['fID'])) {
     exit;
 }
 
-$fID = $_SESSION['fID'];
+// Album ID lekérdezése URL-ből
+$albumID = isset($_GET['album']) ? intval($_GET['album']) : 0;
 
+// Lekérdezzük az album tulajdonosának felhasználó ID-ját
+$query = "SELECT fID FROM Album WHERE aID = :albumID";
+$stmt = oci_parse($conn, $query);
+oci_bind_by_name($stmt, ":albumID", $albumID);
+oci_execute($stmt);
+$row = oci_fetch_assoc($stmt);
+$albumTulajdonosID = $row ? $row['FID'] : -1;
+oci_free_statement($stmt);
 
 if (!isset($_GET['album'])) {
     echo "Hiba: nincs megadva album azonosító.";
     exit;
 }
 
-$albumID = (int)$_GET['album'];
-
-$checkQuery = "SELECT albumNev FROM Album WHERE aID = :albumID AND fID = :fID";
-$checkStmt = oci_parse($conn, $checkQuery);
-oci_bind_by_name($checkStmt, ":albumID", $albumID);
-oci_bind_by_name($checkStmt, ":fID", $fID);
+if ($_SESSION['is_admin']) {
+    $checkQuery = "SELECT albumNev FROM Album WHERE aID = :albumID";
+    $checkStmt = oci_parse($conn, $checkQuery);
+    oci_bind_by_name($checkStmt, ":albumID", $albumID);
+} else {
+    $checkQuery = "SELECT albumNev FROM Album WHERE aID = :albumID AND fID = :fID";
+    $checkStmt = oci_parse($conn, $checkQuery);
+    oci_bind_by_name($checkStmt, ":albumID", $albumID);
+    oci_bind_by_name($checkStmt, ":fID", $albumTulajdonosID);
+}
 oci_execute($checkStmt);
 
 $albumNev = null;
 if ($row = oci_fetch_assoc($checkStmt)) {
-    $albumNev = htmlspecialchars($row['ALBUMNEV']);
+    $albumNev = htmlspecialchars($row['ALBUMNEV'], ENT_QUOTES, 'UTF-8');
 }
 oci_free_statement($checkStmt);
 
@@ -56,7 +69,7 @@ if (isset($_POST['addPhotosToAlbum'])) {
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo htmlspecialchars($albumNev); ?> képei</title>
+    <title><?php echo htmlspecialchars($albumNev, ENT_QUOTES, 'UTF-8'); ?> képei</title>
     <link rel="stylesheet" href="resources/CSS/styles.css">
     <link rel="stylesheet" href="resources/CSS/index.css">
     <link rel="stylesheet" href="resources/CSS/upload.css">
@@ -66,7 +79,10 @@ if (isset($_POST['addPhotosToAlbum'])) {
 <?php include 'navbar.php'; ?>
 <script src="resources/JS/popup.js"></script>
 
-<button class="add-images-button" onclick="openAddPhotosPopup()">Képek hozzáadása</button>
+<?php if (isset($_SESSION["fID"]) && $_SESSION["fID"] == $albumTulajdonosID) {
+    echo '<button class="add-images-button" onclick="openAddPhotosPopup()">Képek hozzáadása</button>';
+}
+?>
 <div id="addPhotosPopup" class="popup" style="display: none;">
     <div class="popup-content">
         <span onclick="closeAddPhotosPopup()" class="close">&times;</span>
@@ -96,9 +112,9 @@ if (isset($_POST['addPhotosToAlbum'])) {
                             break;
                         }
                     }
-                    echo '<div class="photo-option" onclick="togglePhotoSelection(this)" data-kepid="'.$row['KEPID'].'">';
-                    echo '<img src="'.$kepFile.'" alt="'.htmlspecialchars($row['KEPNEV']).'">';
-                    echo '<div class="photo-name">'.htmlspecialchars($row['KEPNEV']).'</div>';
+                    echo '<div class="photo-option" onclick="togglePhotoSelection(this)" data-kepid="' . $row['KEPID'] . '">';
+                    echo '<img src="' . $kepFile . '" alt="' . htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8') . '">';
+                    echo '<div class="photo-name">' . htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8') . '</div>';
                     echo '</div>';
                 }
                 ?>
@@ -110,7 +126,7 @@ if (isset($_POST['addPhotosToAlbum'])) {
                 <button type="submit" name="addPhotosToAlbum">Hozzáadás</button>
             <?php else: ?>
                 <div class='empty-gallery'>
-                    Minden képe hozzáadásra került.
+                    Nincs több kép amit hozzáadhatna az albumhoz!
                 </div>
             <?php endif; ?>
         </form>
@@ -121,18 +137,18 @@ if (isset($_POST['addPhotosToAlbum'])) {
     <h2><?php echo $albumNev; ?></h2>
     <p>
         <?php
-            $stmt = oci_parse($conn, "SELECT SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics 
+        $stmt = oci_parse($conn, "SELECT SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics 
                                     FROM Album a INNER JOIN Tartalmaz t ON a.aID = t.aID
                                     INNER JOIN Kep k ON k.kepID = t.kepID 
                                     WHERE a.aID = :aID");
-            oci_bind_by_name($stmt, ":aID", $albumID);
-            if (oci_execute($stmt)) {
-                $row = oci_fetch_assoc($stmt);
-                echo '(képek: '.$row["NUMBEROFPICS"].' db, összesített pontok: '.$row["POINTS"].' )';
-            } else {
-                $e = oci_error($stmt);
-                die("Database Error: " . $e['message']);
-            }
+        oci_bind_by_name($stmt, ":aID", $albumID);
+        if (oci_execute($stmt)) {
+            $row = oci_fetch_assoc($stmt);
+            echo '(képek: ' . $row["NUMBEROFPICS"] . ' db, összesített pontok: ' . $row["POINTS"] . ' )';
+        } else {
+            $e = oci_error($stmt);
+            die("Database Error: " . $e['message']);
+        }
         ?>
     </p>
     <div class="grid-container">
@@ -153,7 +169,7 @@ if (isset($_POST['addPhotosToAlbum'])) {
         while ($row = oci_fetch_assoc($stmt)) {
             $vanKep = true;
             $kepID = $row['KEPID'];
-            $kepNev = htmlspecialchars($row['KEPNEV']);
+            $kepNev = htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8');
             $kepPath = "resources/APP_IMGS";
             $likeok = $row['ERTEKELES'];
 
