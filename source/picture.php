@@ -2,12 +2,8 @@
 session_start();
 require_once 'resources/SUPPORT_FUNCS/db_connection.php';
 
-$fID = null;
-
-if (isset($_SESSION['fID'])) {
-    $fID = $_SESSION['fID'];
-}
-
+$fID = $_SESSION['fID'] ?? null;
+$isAdmin = $_SESSION['isAdmin'] ?? false;
 $dir = 'resources/APP_IMGS/';
 
 if (!isset($_GET['id'])) {
@@ -18,20 +14,23 @@ if (!isset($_GET['id'])) {
 $kepID = intval($_GET['id']);
 
 $query = "
-        SELECT k.kepID, k.kepNev, k.ertekeles, f.fNev AS felhasznaloNev, h.varos
-        FROM Kep k
-        JOIN Felhasznalo f ON k.fID = f.fID
-        LEFT JOIN Hely h ON k.helyID = h.helyID
-        WHERE k.kepID = :kepID
+    SELECT k.kepID, k.kepNev, k.ertekeles, f.fID, f.fNev AS felhasznaloNev, h.varos
+    FROM Kep k
+    JOIN Felhasznalo f ON k.fID = f.fID
+    LEFT JOIN Hely h ON k.helyID = h.helyID
+    WHERE k.kepID = :kepID
 ";
-
 $stmt = oci_parse($conn, $query);
 oci_bind_by_name($stmt, ":kepID", $kepID);
 oci_execute($stmt);
 
 if ($row = oci_fetch_assoc($stmt)) {
     $kepNev = htmlspecialchars($row['KEPNEV']);
-    $kepPath = "";
+    $feltolto = htmlspecialchars($row['FELHASZNALONEV']);
+    $feltoltoID = $row['FID'];
+    $varos = htmlspecialchars($row['VAROS']);
+    $ertekeles = $row['ERTEKELES'];
+    $canEdit = $isAdmin || ($fID !== null && $fID == $feltoltoID);
 
     $kepPath = 'resources/APP_IMGS/placeholder.png';
     $files = scandir($dir);
@@ -41,13 +40,38 @@ if ($row = oci_fetch_assoc($stmt)) {
             break;
         }
     }
-
-    $kepNev = htmlspecialchars($row['KEPNEV']);
-    $feltolto = htmlspecialchars($row['FELHASZNALONEV']);
-    $varos = htmlspecialchars($row['VAROS']);
-    $ertekeles = $row['ERTEKELES'];
 } else {
     die('Nem található ilyen kép.');
+}
+
+$helyek = [];
+$helyQuery = "SELECT helyID, varos FROM Hely";
+$helyStmt = oci_parse($conn, $helyQuery);
+oci_execute($helyStmt);
+while ($row = oci_fetch_assoc($helyStmt)) {
+    $helyek[] = $row;
+}
+
+$kategoriak = [];
+$katQuery = "SELECT katID, kategoriaNev FROM Kategoria";
+$katStmt = oci_parse($conn, $katQuery);
+oci_execute($katStmt);
+while ($row = oci_fetch_assoc($katStmt)) {
+    $kategoriak[] = $row;
+}
+
+$kategoriakNev = 'Ismeretlen';
+$katQuery = "
+    SELECT k.kategoriaNev
+    FROM KategoriaResze kr
+    JOIN Kategoria k ON kr.katID = k.katID
+    WHERE kr.kepID = :kepID
+";
+$katStmt = oci_parse($conn, $katQuery);
+oci_bind_by_name($katStmt, ":kepID", $kepID);
+oci_execute($katStmt);
+if ($katRow = oci_fetch_assoc($katStmt)) {
+    $kategoriakNev = htmlspecialchars($katRow['KATEGORIANEV']);
 }
 
 $isLiked = false;
@@ -62,7 +86,6 @@ if (isset($_SESSION['fID'])) {
         $isLiked = true;
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +97,6 @@ if (isset($_SESSION['fID'])) {
     <link rel="stylesheet" href="resources/CSS/picture.css">
 </head>
 <body>
-
 <?php include 'navbar.php'; ?>
 
 <div class="picture-page">
@@ -85,13 +107,13 @@ if (isset($_SESSION['fID'])) {
         <h2><?php echo $kepNev; ?></h2>
         <p><strong>Feltöltő:</strong> <?php echo $feltolto; ?></p>
         <p><strong>Helyszín:</strong> <?php echo $varos ?: 'Ismeretlen'; ?></p>
+        <p><strong>Kategória:</strong> <?php echo $kategoriakNev ?: 'Ismeretlen'; ?></p>
         <p><strong>Likeok száma:</strong> <?php echo $ertekeles; ?></p>
 
         <?php if (isset($_SESSION['fID'])): ?>
             <form action="like.php" method="post">
                 <input type="hidden" name="kepID" value="<?php echo $kepID; ?>">
-                <button type="submit"
-                        class="like-button <?php echo $isLiked ? 'liked' : ''; ?>"
+                <button type="submit" class="like-button <?php echo $isLiked ? 'liked' : ''; ?>"
                     <?php echo $isLiked ? 'disabled' : ''; ?>>
                     👍 Like
                 </button>
@@ -104,6 +126,33 @@ if (isset($_SESSION['fID'])) {
             </form>
         <?php endif; ?>
 
+        <?php if ($canEdit): ?>
+            <h3>Kép szerkesztése</h3>
+            <form action="update_kep.php" method="post">
+                <input type="hidden" name="kepID" value="<?php echo $kepID; ?>">
+
+                <label for="helyID">Helyszín:</label>
+                <select name="helyID" id="helyID" required>
+                    <?php foreach ($helyek as $hely): ?>
+                        <option value="<?php echo $hely['HELYID']; ?>" <?php if ($hely['VAROS'] === $varos) echo 'selected'; ?>>
+                            <?php echo htmlspecialchars($hely['VAROS']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <label for="kategoriaID">Kategória:</label>
+                <select name="kategoriaID" id="kategoriaID" required>
+                    <?php foreach ($kategoriak as $kat): ?>
+                        <option value="<?php echo $kat['KATID']; ?>"
+                            <?php if ($kat['KATEGORIANEV'] === $kategoriakNev) echo 'selected'; ?>>
+                            <?php echo htmlspecialchars($kat['KATEGORIANEV']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <button type="submit">Mentés</button>
+            </form>
+        <?php endif; ?>
     </div>
 
     <div class="comments-container">
@@ -131,23 +180,16 @@ if (isset($_SESSION['fID'])) {
                         <div class='comment-user'>$nev</div>
                         <div class='comment-text'>$tartalom</div>
                     </div>
-                ";
+                    ";
                 }
 
                 if (!$hasComment) {
-                    echo "
-                    <div class='no-comments'>
-                        Jelenleg még nincs egy komment sem!
-                    </div>
-                ";
+                    echo "<div class='no-comments'>Jelenleg még nincs egy komment sem!</div>";
                 }
                 ?>
             </div>
         </div>
     </div>
-
 </div>
-
-
 </body>
 </html>

@@ -16,6 +16,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <a style="font-weight: bold;" href="palyazatok.php">Pályázatok</a>
             <?php if ($is_admin): ?>
                 <a style="font-weight: bold;" href="uj_admin.php">Új admin</a>
+                <a style="font-weight: bold;" href="hely_torles.php">Hely törlés</a>
+                <a style="font-weight: bold;" href="kategoria_torles.php">Kategória törlés</a>
             <?php endif; ?>
             <a style="font-weight: bold;" href="logout.php">Kijelentkezés</a>
         <?php else: ?>
