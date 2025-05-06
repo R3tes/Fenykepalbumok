@@ -252,7 +252,6 @@ include('resources/SUPPORT_FUNCS/db_connection.php');
                 </thead>
                 <tbody>
                 <?php
-                // Lekérdezzük a legtöbb pályázatot nyert felhasználókat
                 $stmt = oci_parse($conn, "
     SELECT f.fNev AS FelhasznaloNev, COUNT(n.pID) AS NyertPalyazatok
     FROM Felhasznalo f

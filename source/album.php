@@ -7,10 +7,8 @@ if (!isset($_SESSION['fID'])) {
     exit;
 }
 
-// Album ID lekérdezése URL-ből
 $albumID = isset($_GET['album']) ? intval($_GET['album']) : 0;
 
-// Lekérdezzük az album tulajdonosának felhasználó ID-ját
 $query = "SELECT fID FROM Album WHERE aID = :albumID";
 $stmt = oci_parse($conn, $query);
 oci_bind_by_name($stmt, ":albumID", $albumID);
@@ -59,6 +57,33 @@ if (isset($_POST['addPhotosToAlbum'])) {
             oci_free_statement($insertStmt);
         }
 
+        header("Location: album.php?album=" . $albumID);
+        exit();
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['editAlbum'])) {
+        if (!empty($_POST["newAlbumName"])) {
+            $newName = trim($_POST["newAlbumName"]);
+            $stmt = oci_parse($conn, "UPDATE Album SET albumNev = :newName WHERE aID = :albumID");
+            oci_bind_by_name($stmt, ":newName", $newName);
+            oci_bind_by_name($stmt, ":albumID", $albumID);
+            oci_execute($stmt);
+            oci_free_statement($stmt);
+        }
+
+        if (!empty($_POST["deleteFromAlbum"])) {
+            $kepIDs = explode(",", $_POST["deleteFromAlbum"]);
+
+            foreach ($kepIDs as $kepID) {
+                $stmt = oci_parse($conn, "DELETE FROM Tartalmaz WHERE aID = :albumID AND kepID = :kepID");
+                oci_bind_by_name($stmt, ":albumID", $albumID);
+                oci_bind_by_name($stmt, ":kepID", $kepID);
+                oci_execute($stmt);
+                oci_free_statement($stmt);
+            }
+        }
         header("Location: album.php?album=" . $albumID);
         exit();
     }
@@ -134,7 +159,66 @@ if (isset($_POST['addPhotosToAlbum'])) {
 </div>
 
 <div class="container-album">
-    <h2><?php echo $albumNev; ?></h2>
+
+    <div style="display: flex; gap: 5%; align-items: center;">
+        <h2>Album neve: <?php echo $albumNev; ?></h2>
+
+        <button onclick="openAlbumEditPopup()">Album módosítása</button>
+        <div id="editAlbumPopup" class="popup" style="display: none;">
+            <div class="popup-content">
+                <span class="close" onclick="closeAlbumEditPopup()">&times;</span>
+                <h2>Album módosítása</h2>
+                <form method="POST" onsubmit="return updateAlbumEditForm();">
+                    <input type="hidden" name="albumID" value="<?php echo $albumID; ?>">
+
+                    <label for="newAlbumName">Új albumnév:</label>
+                    <input type="text" id="newAlbumName" name="newAlbumName" placeholder="Új név">
+
+                    <h3>Képek törlése (válassza ki a képeket):</h3>
+                    <div class="photo-album-del-select-grid">
+                        <?php
+                        $stmt = oci_parse($conn, "SELECT k.kepID, k.kepNev
+                                                        FROM Tartalmaz t
+                                                        JOIN Kep k ON t.kepID = k.kepID
+                                                        WHERE t.aID = :albumID
+                                                        ORDER BY k.kepNev ASC");
+                        oci_bind_by_name($stmt, ":albumID", $albumID);
+                        oci_execute($stmt);
+
+                        $vanKep = false;
+
+                        while ($row = oci_fetch_assoc($stmt)) {
+                            $vanKep = true;
+                            $kepPath = "resources/APP_IMGS";
+                            $kepFile = "resources/APP_IMGS/placeholder.png";
+                            foreach (scandir($kepPath) as $file) {
+                                if (fnmatch($row['KEPNEV'] . ".*", $file)) {
+                                    $kepFile = $kepPath . "/" . $file;
+                                    break;
+                                }
+                            }
+                            echo '<div class="photo-album-del-option" onclick="toggleAlbumEditPhotoSelection(this)" data-kepid="' . $row['KEPID'] . '">';
+                            echo '<img src="' . $kepFile . '" alt="' . htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8') . '">';
+                            echo '<div class="photo-album-del-name">' . htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8') . '</div>';
+                            echo '</div>';
+                        }
+
+                        if (!$vanKep) {
+                            echo "<div class='empty-gallery'>
+                                    Jelenleg még nincs kép az albumban!
+                                </div>";
+                        }
+
+                        oci_free_statement($stmt);
+                        ?>
+                    </div>
+                    <input type="hidden" name="deleteFromAlbum" id="deleteFromAlbum">
+                    <button type="submit" name="editAlbum">Módosítás</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <p>
         <?php
         $stmt = oci_parse($conn, "SELECT SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics 
@@ -151,15 +235,14 @@ if (isset($_POST['addPhotosToAlbum'])) {
         }
         ?>
     </p>
+
     <div class="grid-container">
         <?php
-        $query = "
-                    SELECT k.kepID, k.kepNev, k.ERTEKELES
+        $query = "SELECT k.kepID, k.kepNev, k.ERTEKELES
                     FROM Tartalmaz t
                     JOIN Kep k ON t.kepID = k.kepID
                     WHERE t.aID = :albumID
-                    ORDER BY k.kepNev ASC
-                ";
+                    ORDER BY k.kepNev ASC";
         $stmt = oci_parse($conn, $query);
         oci_bind_by_name($stmt, ":albumID", $albumID);
         oci_execute($stmt);

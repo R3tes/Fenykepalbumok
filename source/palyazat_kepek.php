@@ -41,9 +41,13 @@ $row = oci_fetch_assoc($stmt);
 $palyazatNev = $row['PALYAZATNEV'] ?? 'Ismeretlen pályázat';
 oci_free_statement($stmt);
 
-$query = "SELECT k.kepID, k.kepNev, n.pont
+$query = "SELECT k.kepID, k.kepNev, n.pont,
+                 f.fNev AS feltolto,
+                 h.orszag, h.megye, h.varos
           FROM Kep k
           JOIN Nevezett n ON k.kepID = n.kepID
+          JOIN Felhasznalo f ON k.fID = f.fID
+          LEFT JOIN Hely h ON k.helyID = h.helyID
           WHERE n.pID = :pID
           ORDER BY n.pont DESC";
 $stmt = oci_parse($conn, $query);
@@ -73,6 +77,29 @@ oci_execute($stmt);
 
     <div class="gallery">
         <?php while ($row = oci_fetch_assoc($stmt)): ?>
+            <?php
+            $orszag = $row['ORSZAG'] ?? 'Ismeretlen';
+            $megye = $row['MEGYE'] ?? 'Ismeretlen';
+            $varos = $row['VAROS'] ?? 'Ismeretlen';
+            $feltolto = $row['FELTOLTO'] ?? 'Ismeretlen';
+
+            $kepID = $row['KEPID'];
+
+            $katQuery = "SELECT k.kategoriaNev 
+             FROM KategoriaResze kr
+             JOIN Kategoria k ON kr.katID = k.katID
+             WHERE kr.kepID = :kepID";
+
+            $katStmt = oci_parse($conn, $katQuery);
+            oci_bind_by_name($katStmt, ":kepID", $kepID);
+            oci_execute($katStmt);
+
+            $kategoriak = [];
+            while ($katRow = oci_fetch_assoc($katStmt)) {
+                $kategoriak[] = $katRow['KATEGORIANEV'];
+            }
+            oci_free_statement($katStmt);
+            ?>
             <div class="image-card" >
                 <img style="max-width: 80%; height: auto; border-radius: 12px; margin-left: 10%" src="<?php
                 $dir = "resources/APP_IMGS/";
@@ -90,6 +117,15 @@ oci_execute($stmt);
 
                 <div class="imageInfo">
                     <h3>Kép címe: <?php echo htmlspecialchars($row['KEPNEV'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                    <?php
+                    echo "<p style='font-weight: bold'>Helyszín: Ország: $orszag, Megye: $megye, Város: $varos</p>";
+                    echo "<p style='font-weight: bold'>Feltöltő: " . htmlspecialchars($feltolto, ENT_QUOTES, 'UTF-8') . "</p>";
+                    ?>
+                    <?php if (!empty($kategoriak)): ?>
+                        <p style="font-weight: bold">Kategóriák: <?php echo implode(', ', array_map(function ($k) {
+                                return htmlspecialchars($k, ENT_QUOTES, 'UTF-8');
+                            }, $kategoriak)); ?></p>
+                    <?php endif; ?>
                     <p>Szavazatok: <?php echo $row['PONT']; ?></p>
 
                     <?php if ($nyertesKepID && $nyertesKepID == $row['KEPID']): ?>

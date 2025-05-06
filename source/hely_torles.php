@@ -32,6 +32,12 @@ oci_execute($stmt);
 <body>
 <?php include 'navbar.php'; ?>
 
+<style>
+    body{
+        font-family: 'Arial', sans-serif;
+    }
+</style>
+
 <div class="tables">
     <form method="post" action="hely_torles.php">
         <table class="statCategory">

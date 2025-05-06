@@ -21,7 +21,11 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
         <h2>Ranglista</h2>
         <ol>
             <?php 
-                $stmt = oci_parse($conn, "SELECT f.fID, f.fNev, SUM(k.ertekeles) AS points FROM Felhasznalo f INNER JOIN Kep k ON k.fID = f.fID GROUP BY f.fNev, f.fID ORDER BY points DESC");
+                $stmt = oci_parse($conn, "SELECT f.fID, f.fNev, SUM(k.ertekeles) AS points 
+                                                FROM Felhasznalo f 
+                                                INNER JOIN Kep k ON k.fID = f.fID 
+                                                GROUP BY f.fNev, f.fID 
+                                                ORDER BY points DESC");
                 oci_execute($stmt);
                 while ($row = oci_fetch_assoc($stmt)) {
                     echo '<li><a href="profile.php?id='.$row["FID"].'">'.$row["FNEV"].': '.$row["POINTS"].' 👍</a></li>';
@@ -99,7 +103,7 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
                 <div class="grid-container" id="varosok-grid">
                     <?php
                     $query = "
-                        SELECT h.helyID, h.varos,
+                        SELECT h.helyID, h.varos, h.megye, h.orszag,
                                (SELECT COUNT(*) 
                                 FROM Kep k
                                 WHERE k.helyID = h.helyID) AS kepszam,
@@ -115,7 +119,9 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
                     oci_execute($stmt);
 
                     while ($row = oci_fetch_assoc($stmt)) {
-                        $varosNev = htmlspecialchars($row['VAROS'], ENT_QUOTES, 'UTF-8');
+                        $varosNev = htmlspecialchars($row['VAROS'], ENT_QUOTES, 'UTF-8') ?? 'Ismeretlen';
+                        $megyeNev = htmlspecialchars($row['MEGYE'], ENT_QUOTES, 'UTF-8') ?? 'Ismeretlen';
+                        $orszagNev = htmlspecialchars($row['ORSZAG'], ENT_QUOTES, 'UTF-8') ?? 'Ismeretlen';
                         $helyID = $row['HELYID'];
                         $kepszam = $row['KEPSZAM'];
 
@@ -134,7 +140,11 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
                         echo '<a href="varos.php?id=' . urlencode($helyID) . '" class="grid-item" style="text-decoration: none; color: inherit;">';
                         echo '<div>';
                         echo '<img src="' . $kepPath . '" alt="Város" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px;">';
-                        echo "<div style='font-weight: bold'>{$varosNev} ({$kepszam})</div>";
+                        echo '<div style="font-weight: bold;">';
+                        echo '<div>' . htmlspecialchars($varosNev) . ' (' . $kepszam . ')</div>';
+                        echo '<div>Ország: ' . htmlspecialchars($orszagNev ?: 'Ismeretlen') .
+                            ', Megye: ' . htmlspecialchars($megyeNev ?: 'Ismeretlen') . '</div>';
+                        echo '</div>';
                         echo '</div>';
                         echo '</a>';
                     }

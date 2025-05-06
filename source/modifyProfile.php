@@ -32,13 +32,12 @@
                 oci_bind_by_name($stmt, ":fNev", $uname);
                 oci_bind_by_name($stmt, ":email", $email);
                 oci_bind_by_name($stmt, ":pwd", $pwdHash);
-                            
+
                 if (!oci_execute($stmt)) {
                     $e = oci_error($stmt);
                     echo "Query failed: " . $e['message'];
                     die();
                 }
-
             } else{
                 $hiba = "A jelszavak nem egyeznek";
             }
@@ -97,7 +96,7 @@
     <main>
         <form method="POST">
             <div class="formHead">
-                <h2>Felhasználói aadatok módosítása</h2>
+                <h2>Felhasználói adatok módosítása</h2>
             </div>
             
             <div class="uploadForm">

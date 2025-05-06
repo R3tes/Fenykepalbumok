@@ -40,6 +40,61 @@ button{
     border-radius: 5px;
 }
 
+.album-del-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.album-del-option {
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.album-del-option.selected {
+    opacity: 0.4;
+    border-color: red;
+}
+
+.album-del-option img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+/*---*/
+.photo-album-del-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin: 10px 0;
+}
+.photo-album-del-option {
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.photo-album-del-option.selected {
+    border-color: red;
+    opacity: 0.4;
+}
+.photo-album-del-option img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+#newAlbumName{
+    margin: auto;
+    width: 30%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+/*---*/
+
 .title{
     text-align: center;
 }

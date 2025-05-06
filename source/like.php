@@ -2,26 +2,28 @@
 session_start();
 require_once 'resources/SUPPORT_FUNCS/db_connection.php';
 
-if (!isset($_SESSION['fID'])) {
-    header('Location: login.php');
+if (!isset($_SESSION['fID']) || !isset($_POST['kepID'])) {
+    header("Location: index.php");
     exit();
 }
 
-if (isset($_POST['kepID'])) {
-    $fID = $_SESSION['fID'];
-    $kepID = intval($_POST['kepID']);
+$fID = intval($_SESSION['fID']);
+$kepID = intval($_POST['kepID']);
 
-    $stmt = oci_parse($conn, "BEGIN :result := like_kep(:fID, :kepID); END;");
+// Meghívjuk az adatbázisban létrehozott like_pic eljárást
+$sql = "BEGIN like_pic(:fid, :kepid); END;";
+$stmt = oci_parse($conn, $sql);
+oci_bind_by_name($stmt, ':fid', $fID);
+oci_bind_by_name($stmt, ':kepid', $kepID);
 
-    oci_bind_by_name($stmt, ":fID", $fID, -1, SQLT_INT);
-    oci_bind_by_name($stmt, ":kepID", $kepID, -1, SQLT_INT);
-    
-    $result = null;
-    oci_bind_by_name($stmt, ":result", $result, -1, SQLT_INT);
-    
-    oci_execute($stmt);
+if (oci_execute($stmt)) {
+    // Sikeres like után visszairányítjuk a felhasználót a kép oldalra
+    header("Location: picture.php?id=$kepID");
+} else {
+    $e = oci_error($stmt);
+    echo "Hiba történt a kedvelés során: " . htmlentities($e['message']);
 }
 
-header("Location: picture.php?id=" . $kepID);
-exit();
+oci_free_statement($stmt);
+oci_close($conn);
 ?>

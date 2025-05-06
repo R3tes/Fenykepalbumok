@@ -58,7 +58,6 @@ oci_execute($stmt);
                 </td>
                 <td>
                     <?php
-//                    if (!$is_admin) {
                         $nyertesQuery = "SELECT COUNT(*) AS CNT FROM Nyertesek WHERE pID = :pID";
                         $nyertesStmt = oci_parse($conn, $nyertesQuery);
                         oci_bind_by_name($nyertesStmt, ":pID", $row['PID']);
@@ -72,7 +71,6 @@ oci_execute($stmt);
                         <?php else: ?>
                             <span style="color:gray;">Lezárt</span>
                         <?php endif;
-//                    }
                     ?>
                 </td>
 

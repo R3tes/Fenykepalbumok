@@ -2,11 +2,6 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f0f2f5;
     margin: 0;
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
-    /*height: 100vh;*/
-    /*padding: 2rem;*/
 }
 
 form, .palyazat {
@@ -17,6 +12,25 @@ form, .palyazat {
     width: 300px;
 
     margin: 10% auto;
+}
+
+.city-item {
+    padding: 10px;
+    background-color: #f4f9f9;
+    border-radius: 8px;
+    margin: 10px;
+    text-align: center;
+}
+
+.city-label {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.location-info {
+    font-size: 13px;
+    color: #444;
+    margin-top: 5px;
 }
 
 .disabled-btn {
@@ -162,4 +176,49 @@ h1 {
 .palyazatok-lista td a.btn {
     margin-right: 10px;
 }
+
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.edit-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.edit-form input[type="text"],
+.edit-form input[list] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.edit-form .save-btn {
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.edit-form .save-btn:hover {
+    background-color: #218838;
+}
+
 
