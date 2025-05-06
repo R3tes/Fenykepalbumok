@@ -27,18 +27,18 @@
         } else{
             if($pwd === $pwd2){
                 $pwdHash = password_hash($pwd, PASSWORD_DEFAULT);
-                if($email !== $row["EMAIL"] || $uname !== $row["FNEV"] || $pwdHash !== $row["JELSZO"]){
-                    $stmt = oci_parse($conn, "UPDATE Felhasznalo SET fNev = :fNev, email = :email, jelszo = :pwd WHERE fID = :fID"); 
-                    oci_bind_by_name($stmt, ":fID", $_SESSION["fID"]); 
-                    oci_bind_by_name($stmt, ":fNev", $uname); 
-                    oci_bind_by_name($stmt, ":email", $email); 
-                    oci_bind_by_name($stmt, ":pwd", $pwdHash); 
-                    if (!oci_execute($stmt)) {
-                        $e = oci_error($stmt);
-                        echo "Query failed: " . $e['message'];
-                        die();
-                    }
+                $stmt = oci_parse($conn, "BEGIN update_user_if_changed(:fID, :fNev, :email, :pwd); END;");
+                oci_bind_by_name($stmt, ":fID", $_SESSION["fID"]);
+                oci_bind_by_name($stmt, ":fNev", $uname);
+                oci_bind_by_name($stmt, ":email", $email);
+                oci_bind_by_name($stmt, ":pwd", $pwdHash);
+                            
+                if (!oci_execute($stmt)) {
+                    $e = oci_error($stmt);
+                    echo "Query failed: " . $e['message'];
+                    die();
                 }
+
             } else{
                 $hiba = "A jelszavak nem egyeznek";
             }

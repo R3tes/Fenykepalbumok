@@ -74,27 +74,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $hely = NULL;
     if (!empty($_POST['countries']) && !empty($_POST['counties']) && !empty($_POST['cities'])) {
-        $stmt = oci_parse($conn, "SELECT helyID FROM Hely WHERE varos = :city AND megye = :county AND orszag = :country");
+        $query = "BEGIN get_or_create_hely(:city, :county, :country, :helyID); END;";
+        $stmt = oci_parse($conn, $query);
+
         oci_bind_by_name($stmt, ":city", $varos);
         oci_bind_by_name($stmt, ":county", $megye);
         oci_bind_by_name($stmt, ":country", $orszag);
+        oci_bind_by_name($stmt, ":helyID", $hely, -1, SQLT_INT);
 
-        if (oci_execute($stmt)) {
-            if ($row = oci_fetch_assoc($stmt)) {
-                $hely = $row["HELYID"];
-            } else {
-                oci_free_statement($stmt);
-                $stmt = oci_parse($conn, "INSERT INTO Hely (helyID, orszag, megye, varos)
-                          VALUES (hely_seq.NEXTVAL, :country, :county, :city)
-                          RETURNING helyID INTO :helyID");
-                oci_bind_by_name($stmt, ":city", $varos);
-                oci_bind_by_name($stmt, ":county", $megye);
-                oci_bind_by_name($stmt, ":country", $orszag);
-                oci_bind_by_name($stmt, ":helyID", $hely, SQLT_INT);
-                oci_execute($stmt);
-            }
-            oci_free_statement($stmt);
+        if (!oci_execute($stmt)) {
+            $e = oci_error($stmt);
+            die("Database Error: " . $e['message']);
         }
+
     }
     $kepID = 0;
     if (!empty($kepNev) && !empty($fIDUpload)) {
@@ -131,28 +123,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $katNev = trim($katNev);
             if (empty($katNev)) continue;
 
-            $katID = null;
+            $stmt = oci_parse($conn, "BEGIN add_category_link(:katNev, :kepID); END;");
+    
+            oci_bind_by_name($stmt, ":katNev", $katNev);
+            oci_bind_by_name($stmt, ":kepID", $kepID, -1, SQLT_INT); // assuming $kepID is an integer
 
-            $katQuery = oci_parse($conn, "SELECT katID FROM Kategoria WHERE LOWER(kategoriaNev) = LOWER(:katNev)");
-            oci_bind_by_name($katQuery, ":katNev", $katNev);
-            oci_execute($katQuery);
-
-            if ($row = oci_fetch_assoc($katQuery)) {
-                $katID = $row['KATID'];
-            } else {
-                $insertKat = oci_parse($conn, "INSERT INTO Kategoria (katID, kategoriaNev) VALUES (kat_seq.NEXTVAL, :katNev) RETURNING katID INTO :katID");
-                oci_bind_by_name($insertKat, ":katNev", $katNev);
-                oci_bind_by_name($insertKat, ":katID", $katID, -1, OCI_B_INT);
-                oci_execute($insertKat);
-                oci_free_statement($insertKat);
-            }
-            oci_free_statement($katQuery);
-
-            $insertKapcs = oci_parse($conn, "INSERT INTO KategoriaResze (katID, kepID) VALUES (:katID, :kepID)");
-            oci_bind_by_name($insertKapcs, ":katID", $katID);
-            oci_bind_by_name($insertKapcs, ":kepID", $kepID);
-            oci_execute($insertKapcs);
-            oci_free_statement($insertKapcs);
+            oci_execute($stmt);
+            oci_free_statement($stmt);
         }
     }
 }
@@ -237,17 +214,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </h1>
             <p>
                 <?php
-                    $stmt = oci_parse($conn, "SELECT SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics FROM Kep k WHERE k.fID = :fID");
-                    oci_bind_by_name($stmt, ":fID", $fID);
-                    
+                    $query = "
+                    BEGIN
+                        get_user_stat(:fID, :points, :numPics);
+                    END;";
+                
+                
+                    $stmt = oci_parse($conn, $query);
+
+                    oci_bind_by_name($stmt, ":fID", $fID, -1, SQLT_INT);
+                    oci_bind_by_name($stmt, ":points", $points, -1, SQLT_INT);
+                    oci_bind_by_name($stmt, ":numPics", $numPics, -1, SQLT_INT);
+
                     if (oci_execute($stmt)) {
-                        $row = oci_fetch_assoc($stmt);
-                        echo '(képek: '.$row["NUMBEROFPICS"].' db, összesített pontok: '.$row["POINTS"].' )';
+                        echo '(képek: ' . $numPics . ' db, összesített pontok: ' . $points . ' )';
                     } else {
                         $e = oci_error($stmt);
                         die("Database Error: " . $e['message']);
                     }
-                    
                 ?>
             </p>
         </div>
@@ -337,7 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button class="interact">Felhasználói adatok szerkesztése</button>
                     </a>
 
-                    <?php if ($row["NUMBEROFPICS"] > 0) {
+                    <?php if ($numPics > 0) {
                     echo '<button onclick="openDeletePhotoPopup()">Képek törlése</button>';
                     } ?>
 

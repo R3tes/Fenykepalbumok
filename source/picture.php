@@ -160,18 +160,19 @@ if (isset($_SESSION['fID'])) {
         <div class="comments-scrollable">
             <div class="comments">
                 <?php
-                $kommentQuery = "SELECT h.tartalom, f.fNev
-                    FROM Hozzaszolas h
-                    JOIN Felhasznalo f ON h.fID = f.fID
-                    WHERE h.kepID = :kepID
-                    ORDER BY h.hozzaszolasID DESC";
-                $kommentStmt = oci_parse($conn, $kommentQuery);
-                oci_bind_by_name($kommentStmt, ":kepID", $kepID);
-                oci_execute($kommentStmt);
-
+                $query = "BEGIN :cursor := get_kommentek(:kepID); END;";
+                $stmt = oci_parse($conn, $query);
+                
+                $refCursor = oci_new_cursor($conn);
+                oci_bind_by_name($stmt, ":cursor", $refCursor, -1, OCI_B_CURSOR);
+                oci_bind_by_name($stmt, ":kepID", $kepID, -1, SQLT_INT);
+                
+                oci_execute($stmt);
+                oci_execute($refCursor); // execute the cursor itself
+                
                 $hasComment = false;
-
-                while ($komment = oci_fetch_assoc($kommentStmt)) {
+                
+                while ($komment = oci_fetch_assoc($refCursor)) {
                     $hasComment = true;
                     $nev = htmlspecialchars($komment['FNEV'], ENT_QUOTES, 'UTF-8');
                     $tartalom = htmlspecialchars($komment['TARTALOM'], ENT_QUOTES, 'UTF-8');
@@ -182,7 +183,10 @@ if (isset($_SESSION['fID'])) {
                     </div>
                     ";
                 }
-
+                
+                oci_free_statement($stmt);
+                oci_free_statement($refCursor);
+                                
                 if (!$hasComment) {
                     echo "<div class='no-comments'>Jelenleg még nincs egy komment sem!</div>";
                 }

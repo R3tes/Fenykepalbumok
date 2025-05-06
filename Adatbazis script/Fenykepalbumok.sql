@@ -176,6 +176,128 @@ BEGIN
     :NEW.created_at := SYSDATE;
 END;
 /
+CREATE OR REPLACE PROCEDURE add_category_link(
+    p_katNev IN VARCHAR2,
+    p_kepID  IN NUMBER
+)
+IS
+    v_katID Kategoria.katID%TYPE;
+BEGIN
+    IF TRIM(p_katNev) IS NULL THEN
+        RETURN;
+    END IF;
+
+    BEGIN
+        SELECT katID
+        INTO v_katID
+        FROM Kategoria
+        WHERE LOWER(kategoriaNev) = LOWER(TRIM(p_katNev));
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            INSERT INTO Kategoria (katID, kategoriaNev)
+            VALUES (kat_seq.NEXTVAL, TRIM(p_katNev))
+            RETURNING katID INTO v_katID;
+    END;
+
+    INSERT INTO KategoriaResze (katID, kepID)
+    VALUES (v_katID, p_kepID);
+END;
+/
+CREATE OR REPLACE PROCEDURE like_pic(
+    p_fid   IN NUMBER,
+    p_kepid IN NUMBER
+)
+IS
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*)
+    INTO v_count
+    FROM Likeok
+    WHERE fID = p_fid AND kepID = p_kepid;
+
+    IF v_count = 0 THEN
+        INSERT INTO Likeok (fID, kepID)
+        VALUES (p_fid, p_kepid);
+
+        UPDATE Kep
+        SET ertekeles = ertekeles + 1
+        WHERE kepID = p_kepid;
+    END IF;
+END;
+/
+CREATE OR REPLACE PROCEDURE update_user_if_changed (
+    p_fid     IN NUMBER,
+    p_fname   IN VARCHAR2,
+    p_email   IN VARCHAR2,
+    p_pwdhash IN VARCHAR2
+)
+IS
+    v_count NUMBER;
+BEGIN
+    -- Only update if something changed
+    SELECT COUNT(*)
+    INTO v_count
+    FROM Felhasznalo
+    WHERE fID = p_fid
+      AND (fNev != p_fname OR email != p_email OR jelszo != p_pwdhash);
+
+    IF v_count > 0 THEN
+        UPDATE Felhasznalo
+        SET fNev = p_fname,
+            email = p_email,
+            jelszo = p_pwdhash
+        WHERE fID = p_fid;
+    END IF;
+END;
+/
+CREATE OR REPLACE PROCEDURE get_user_stat (
+    p_fid         IN  NUMBER,
+    p_points      OUT NUMBER,
+    p_numberOfPics OUT NUMBER
+)
+IS
+BEGIN
+    SELECT NVL(SUM(ertekeles), 0), COUNT(*)
+    INTO p_points, p_numberOfPics
+    FROM Kep
+    WHERE fID = p_fid;
+END;
+/
+CREATE OR REPLACE FUNCTION get_kommentek(p_kepID IN NUMBER)
+RETURN SYS_REFCURSOR
+IS
+    rc SYS_REFCURSOR;
+BEGIN
+    OPEN rc FOR
+        SELECT h.tartalom, f.fNev
+        FROM Hozzaszolas h
+        JOIN Felhasznalo f ON h.fID = f.fID
+        WHERE h.kepID = p_kepID
+        ORDER BY h.hozzaszolasID DESC;
+    RETURN rc;
+END;
+/
+CREATE OR REPLACE PROCEDURE get_or_create_hely (
+    p_varos     IN  VARCHAR2,
+    p_megye     IN  VARCHAR2,
+    p_orszag    IN  VARCHAR2,
+    p_helyID    OUT NUMBER
+)
+IS
+BEGIN
+    -- Try to find existing hely
+    SELECT helyID INTO p_helyID
+    FROM Hely
+    WHERE varos = p_varos AND megye = p_megye AND orszag = p_orszag;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        -- Insert new hely if not found
+        INSERT INTO Hely (helyID, orszag, megye, varos)
+        VALUES (hely_seq.NEXTVAL, p_orszag, p_megye, p_varos)
+        RETURNING helyID INTO p_helyID;
+END;
+/
 
 -- Felhasználó tábla feltöltése
 INSERT INTO Felhasznalo (fID, fNev, email, jelszo, jogosultsag) VALUES (1, 'Kiss Anna', 'anna.kiss@gmail.com', '12345', 'felhasznalo');
