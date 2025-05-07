@@ -23,11 +23,19 @@ if (!isset($_GET['album'])) {
 }
 
 if ($_SESSION['is_admin']) {
-    $checkQuery = "SELECT albumNev FROM Album WHERE aID = :albumID";
+    $checkQuery = "SELECT SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics, a.albumNev
+                        FROM Album a INNER JOIN Tartalmaz t ON a.aID = t.aID
+                        INNER JOIN Kep k ON k.kepID = t.kepID 
+                        WHERE a.aID = :albumID
+                        GROUP BY a.albumNev";
     $checkStmt = oci_parse($conn, $checkQuery);
     oci_bind_by_name($checkStmt, ":albumID", $albumID);
 } else {
-    $checkQuery = "SELECT albumNev FROM Album WHERE aID = :albumID AND fID = :fID";
+    $checkQuery = "SELECT SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics, a.albumNev
+                        FROM Album a INNER JOIN Tartalmaz t ON a.aID = t.aID
+                        INNER JOIN Kep k ON k.kepID = t.kepID 
+                        WHERE a.aID = :albumID AND a.fID = :fID
+                        GROUP BY a.albumNev";
     $checkStmt = oci_parse($conn, $checkQuery);
     oci_bind_by_name($checkStmt, ":albumID", $albumID);
     oci_bind_by_name($checkStmt, ":fID", $albumTulajdonosID);
@@ -35,9 +43,14 @@ if ($_SESSION['is_admin']) {
 oci_execute($checkStmt);
 
 $albumNev = null;
+$numberOfPics = 0;
+$albumPoints = 0;
 if ($row = oci_fetch_assoc($checkStmt)) {
     $albumNev = htmlspecialchars($row['ALBUMNEV'], ENT_QUOTES, 'UTF-8');
+    $numberOfPics = htmlspecialchars($row['NUMBEROFPICS'], ENT_QUOTES, 'UTF-8');
+    $albumPoints = htmlspecialchars($row['POINTS'], ENT_QUOTES, 'UTF-8');
 }
+
 oci_free_statement($checkStmt);
 
 if (!$albumNev) {
@@ -229,18 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <p>
         <?php
-        $stmt = oci_parse($conn, "SELECT SUM(k.ertekeles) AS points, COUNT(k.kepID) AS numberOfPics 
-                                    FROM Album a INNER JOIN Tartalmaz t ON a.aID = t.aID
-                                    INNER JOIN Kep k ON k.kepID = t.kepID 
-                                    WHERE a.aID = :aID");
-        oci_bind_by_name($stmt, ":aID", $albumID);
-        if (oci_execute($stmt)) {
-            $row = oci_fetch_assoc($stmt);
-            echo '(képek: ' . $row["NUMBEROFPICS"] . ' db, összesített pontok: ' . $row["POINTS"] . ' )';
-        } else {
-            $e = oci_error($stmt);
-            die("Database Error: " . $e['message']);
-        }
+        echo '(képek: ' . $numberOfPics . ' db, összesített pontok: ' . $albumPoints . ' )';
         ?>
     </p>
 
