@@ -15,55 +15,80 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['torlendo_kategoriak']
         oci_execute($stmt);
         oci_free_statement($stmt);
     }
-    echo "<p style='color: green;'>Kiválasztott kategória(k) sikeresen törölve.</p>";
+
+    $_SESSION['success_message'] = "Kiválasztott kategóriák sikeresen törölve.";
+    header("Location: kategoria_torles.php");
+    exit();
 }
 
+$kategoriak = [];
 $query = "SELECT katID, kategoriaNev FROM Kategoria ORDER BY kategoriaNev";
 $stmt = oci_parse($conn, $query);
 oci_execute($stmt);
+while ($row = oci_fetch_assoc($stmt)) {
+    $kategoriak[] = $row;
+}
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <title>Kategóriák törlése</title>
+    <link rel="stylesheet" href="resources/CSS/hely_es_kategoria_torles.css">
 </head>
 <body>
 <?php include 'navbar.php'; ?>
 
-<style>
-    body{
-        font-family: 'Arial', sans-serif;
-    }
-</style>
+<?php if (isset($_SESSION['success_message'])): ?>
+    <script>
+        alert("<?= addslashes($_SESSION['success_message']) ?>");
+    </script>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
 
-<div class="tables">
-    <form method="post" action="kategoria_torles.php">
-        <table class="statCategory">
+<div class="place-delete-container">
+    <h2>Kategória törlése</h2>
+    <form method="POST">
+        <table class="place-table">
             <thead>
             <tr>
                 <th>Törlés</th>
-                <th>Kategória név</th>
+                <th>Kategória neve</th>
             </tr>
             </thead>
             <tbody>
-            <?php while ($row = oci_fetch_assoc($stmt)): ?>
-                <tr>
-                    <td><input type="checkbox" name="torlendo_kategoriak[]" value="<?= htmlspecialchars($row['KATID']) ?>"></td>
-                    <td><?= htmlspecialchars($row['KATEGORIANEV']) ?></td>
+            <?php foreach ($kategoriak as $kat): ?>
+                <tr class="clickable-row" data-checkbox-id="kat<?= $kat['KATID'] ?>">
+                    <td>
+                        <input type="checkbox" id="kat<?= $kat['KATID'] ?>" name="torlendo_kategoriak[]" value="<?= $kat['KATID'] ?>">
+                    </td>
+                    <td>
+                        <label for="kat<?= $kat['KATID'] ?>"><?= htmlspecialchars($kat['KATEGORIANEV']) ?></label>
+                    </td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
             </tbody>
+
         </table>
-        <br>
-        <div style="text-align: center;">
-            <input type="submit" value="Kiválasztott kategóriák törlése">
-        </div>
+        <button type="submit" class="delete-btn">Kiválasztott kategóriák törlése</button>
     </form>
 </div>
 </body>
 </html>
+
+<script>
+    document.querySelectorAll('.clickable-row').forEach(row => {
+        row.addEventListener('click', function (e) {
+
+            if (e.target.tagName.toLowerCase() !== 'input') {
+                const checkboxId = this.dataset.checkboxId;
+                const checkbox = document.getElementById(checkboxId);
+                checkbox.checked = !checkbox.checked;
+            }
+        });
+    });
+</script>
 
 <?php
 oci_free_statement($stmt);

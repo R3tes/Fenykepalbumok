@@ -15,6 +15,7 @@ if ($pID) {
     oci_execute($stmt);
 }
 
+$_SESSION['success_message'] = "A pályázat sikeresen törölve.";
 header("Location: palyazatok.php");
 exit();
 ?>

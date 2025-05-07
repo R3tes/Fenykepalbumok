@@ -15,7 +15,7 @@ if (!isset($_GET['id'])) {
 $kepID = intval($_GET['id']);
 
 $query = "
-        SELECT k.kepID, k.kepNev, k.ertekeles, f.fID, f.fNev AS felhasznaloNev, h.varos, h.megye, h.orszag
+        SELECT k.kepID, k.kepNev, k.ertekeles, k.uploaded_at, f.fID, f.fNev AS felhasznaloNev, h.varos, h.megye, h.orszag
         FROM Kep k
         JOIN Felhasznalo f ON k.fID = f.fID
         LEFT JOIN Hely h ON k.helyID = h.helyID
@@ -49,6 +49,7 @@ if ($row = oci_fetch_assoc($stmt)) {
     $orszag = !empty($row['ORSZAG']) ? htmlspecialchars($row['ORSZAG'], ENT_QUOTES, 'UTF-8') : "Ismeretlen";
     $megye = !empty($row['MEGYE']) ? htmlspecialchars($row['MEGYE'], ENT_QUOTES, 'UTF-8') : "Ismeretlen";
     $varos = !empty($row['VAROS']) ? htmlspecialchars($row['VAROS'], ENT_QUOTES, 'UTF-8') : "Ismeretlen";
+    $uploadedAt = $row['UPLOADED_AT'] ? date('Y.m.d', strtotime($row['UPLOADED_AT'])) : 'Ismeretlen';
     $ertekeles = $row['ERTEKELES'];
 
     $helyek = [];
@@ -120,7 +121,6 @@ oci_execute($stid);
 while ($row = oci_fetch_assoc($stid)) {
     $categories[] = $row['KATEGORIANEV'];
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -135,132 +135,150 @@ while ($row = oci_fetch_assoc($stid)) {
 
 <?php include 'navbar.php'; ?>
 
-<div class="picture-page">
-    <div class="picture-container">
-        <img src="<?php echo $kepPath; ?>" alt="<?php echo $kepNev; ?>">
-    </div>
-    <div class="info-container">
-        <h2>Kép címe: <?php echo $kepNev; ?></h2>
-        <p><strong>Feltöltő:</strong> <?php echo $feltolto; ?></p>
-        <p><strong>Helyszín:</strong> <?php
-            echo "Ország: $orszag, Megye: $megye, Város: $varos.";
-            ?></p>
-        <p><strong>Kategória:</strong> <?php echo $kategoriakNev ?: 'Ismeretlen'; ?></p>
-        <p><strong>Likeok száma:</strong> <?php echo $ertekeles; ?></p>
+<?php if (isset($_SESSION['success_message'])): ?>
+    <script>
+        alert("<?= addslashes($_SESSION['success_message']) ?>");
+    </script>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
 
-        <?php if (isset($_SESSION['fID'])): ?>
-            <form action="like.php" method="post">
-                <input type="hidden" name="kepID" value="<?php echo $kepID; ?>">
-                <button type="submit"
-                        class="like-button <?php echo $isLiked ? 'liked' : ''; ?>"
-                    <?php echo $isLiked ? 'disabled' : ''; ?>>
-                    👍 Like
-                </button>
-            </form>
+<div class="picture-page-flex">
+    <div class="picture-left">
+        <div class="picture-container">
+            <img src="<?php echo $kepPath; ?>" alt="<?php echo $kepNev; ?>">
+        </div>
 
-            <form action="comment.php" method="post">
-                <input type="hidden" name="kepID" value="<?php echo $kepID; ?>">
-                <textarea name="comment" placeholder="Írd ide a hozzászólásod..." required></textarea>
-                <button type="submit">Komment beküldése</button>
-            </form>
-        <?php endif; ?>
+        <div class="info-container">
+            <h2>Kép címe: <?php echo $kepNev; ?></h2>
+            <p><strong>Feltöltés dátuma:</strong> <?php echo $uploadedAt; ?></p>
+            <p><strong>Feltöltő:</strong> <?php echo $feltolto; ?></p>
+            <p><strong>Helyszín:</strong> <?php
+                echo "Ország: $orszag, Megye: $megye, Város: $varos.";
+                ?></p>
+            <p><strong>Kategória:</strong> <?php echo $kategoriakNev ?: 'Ismeretlen'; ?></p>
+            <p><strong>Likeok száma:</strong> <?php echo $ertekeles; ?></p>
 
-        <?php if ($canEdit): ?>
-            <h3>Kép szerkesztése</h3>
-            <form action="update_kep.php" method="post" class="edit-form">
-                <input type="hidden" name="kepID" value="<?php echo $kepID; ?>">
+            <?php if ($canEdit): ?>
+                <h3>Kép szerkesztése</h3>
+                <form action="update_kep.php" method="post" class="edit-form">
+                    <input type="hidden" name="kepID" value="<?php echo $kepID; ?>">
 
-                <div class="form-group">
-                    <label for="orszagInput">Ország:</label>
-                    <input list="countries" id="orszagInput" name="orszag" value="<?php echo $orszag; ?>" required>
-                    <datalist id="countries">
-                        <?php foreach ($countries as $country): ?>
-                            <option value="<?= htmlspecialchars($country, ENT_QUOTES, 'UTF-8') ?>"></option>
-                        <?php endforeach; ?>
-                    </datalist>
-                </div>
+                    <div class="form-group">
+                        <label for="orszagInput">Ország:</label>
+                        <input list="countries" id="orszagInput" name="orszag" value="<?php echo $orszag; ?>" required>
+                        <datalist id="countries">
+                            <?php foreach ($countries as $country): ?>
+                                <option value="<?= htmlspecialchars($country, ENT_QUOTES, 'UTF-8') ?>"></option>
+                            <?php endforeach; ?>
+                        </datalist>
+                    </div>
 
-                <div class="form-group">
-                    <label for="megyeInput">Megye:</label>
-                    <input list="counties" id="megyeInput" name="megye" value="<?php echo $megye; ?>" required>
-                    <datalist id="counties">
-                        <?php foreach ($counties as $county): ?>
-                            <option value="<?= htmlspecialchars($county, ENT_QUOTES, 'UTF-8') ?>"></option>
-                        <?php endforeach; ?>
-                    </datalist>
-                </div>
+                    <div class="form-group">
+                        <label for="megyeInput">Megye:</label>
+                        <input list="counties" id="megyeInput" name="megye" value="<?php echo $megye; ?>" required>
+                        <datalist id="counties">
+                            <?php foreach ($counties as $county): ?>
+                                <option value="<?= htmlspecialchars($county, ENT_QUOTES, 'UTF-8') ?>"></option>
+                            <?php endforeach; ?>
+                        </datalist>
+                    </div>
 
-                <div class="form-group">
-                    <label for="varosInput">Város:</label>
-                    <input list="cities" id="varosInput" name="varos" value="<?php echo $varos; ?>" required>
-                    <datalist id="cities">
-                        <?php foreach ($cities as $city): ?>
-                            <option value="<?= htmlspecialchars($city, ENT_QUOTES, 'UTF-8') ?>"></option>
-                        <?php endforeach; ?>
-                    </datalist>
-                </div>
+                    <div class="form-group">
+                        <label for="varosInput">Város:</label>
+                        <input list="cities" id="varosInput" name="varos" value="<?php echo $varos; ?>" required>
+                        <datalist id="cities">
+                            <?php foreach ($cities as $city): ?>
+                                <option value="<?= htmlspecialchars($city, ENT_QUOTES, 'UTF-8') ?>"></option>
+                            <?php endforeach; ?>
+                        </datalist>
+                    </div>
 
-                <div class="form-group">
-                    <label for="categoryInput">Kategória:</label>
-                    <input list="categories" id="categoryInput" name="category" value="<?php echo $kategoriakNev; ?>" required>
-                    <datalist id="categories">
-                        <?php foreach ($categories as $cat): ?>
-                            <option value="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>"></option>
-                        <?php endforeach; ?>
-                    </datalist>
-                </div>
+                    <div class="form-group">
+                        <label for="categoryInput">Kategória:</label>
+                        <input list="categories" id="categoryInput" name="category" value="<?php echo $kategoriakNev; ?>"
+                               required>
+                        <datalist id="categories">
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>"></option>
+                            <?php endforeach; ?>
+                        </datalist>
+                    </div>
 
-                <button type="submit" class="save-btn">Mentés</button>
-            </form>
-        <?php endif; ?>
+                    <button type="submit" class="save-btn">Mentés</button>
+                </form>
+            <?php endif; ?>
+        </div>
     </div>
 
-    <div class="comments-container">
-        <h3>Kommentek</h3>
-        <div class="comments-scrollable">
-            <div class="comments">
-                <?php
-                $query = "BEGIN :cursor := get_kommentek(:kepID); END;";
-                $stmt = oci_parse($conn, $query);
+    <div class="picture-right">
+        <div class="interaction-and-comments">
+            <div class="interaction-box">
+                <?php if (isset($_SESSION['fID'])): ?>
+                    <form action="like.php" method="post">
+                        <input type="hidden" name="kepID" value="<?php echo $kepID; ?>">
+                        <button type="submit"
+                                class="like-button <?php echo $isLiked ? 'liked' : ''; ?>"
+                            <?php echo $isLiked ? 'disabled' : ''; ?>>
+                            👍 Like
+                        </button>
+                    </form>
 
-                $refCursor = oci_new_cursor($conn);
-                oci_bind_by_name($stmt, ":cursor", $refCursor, -1, OCI_B_CURSOR);
-                oci_bind_by_name($stmt, ":kepID", $kepID, -1, SQLT_INT);
-
-                oci_execute($stmt);
-                oci_execute($refCursor); // execute the cursor itself
-
-                $hasComment = false;
-
-                while ($komment = oci_fetch_assoc($refCursor)) {
-                    $hasComment = true;
-                    $nev = htmlspecialchars($komment['FNEV'], ENT_QUOTES, 'UTF-8');
-                    $tartalom = htmlspecialchars($komment['TARTALOM'], ENT_QUOTES, 'UTF-8');
-                    echo "
-                    <div class='comment'>
-                        <div class='comment-user'>$nev</div>
-                        <div class='comment-text'>$tartalom</div>
-                    </div>
-                ";
-                }
-
-                oci_free_statement($stmt);
-                oci_free_statement($refCursor);
-
-                if (!$hasComment) {
-                    echo "
-                    <div class='no-comments'>
-                        Jelenleg még nincs egy komment sem!
-                    </div>
-                ";
-                }
-                ?>
+                    <form action="comment.php" method="post" class="comment-form">
+                        <input type="hidden" name="kepID" value="<?php echo $kepID; ?>">
+                        <textarea name="comment" placeholder="Írd ide a hozzászólásod..." required></textarea>
+                        <button type="submit">Komment beküldése</button>
+                    </form>
+                <?php endif; ?>
             </div>
+
+            <div class="comments-container">
+                <h3>Kommentek</h3>
+                <div class="comments-scrollable">
+                    <div class="comments">
+                        <?php
+                        $query = "BEGIN :cursor := get_kommentek(:kepID); END;";
+                        $stmt = oci_parse($conn, $query);
+
+                        $refCursor = oci_new_cursor($conn);
+                        oci_bind_by_name($stmt, ":cursor", $refCursor, -1, OCI_B_CURSOR);
+                        oci_bind_by_name($stmt, ":kepID", $kepID, -1, SQLT_INT);
+
+                        oci_execute($stmt);
+                        oci_execute($refCursor); // execute the cursor itself
+
+                        $hasComment = false;
+
+                        while ($komment = oci_fetch_assoc($refCursor)) {
+                            $hasComment = true;
+                            $nev = htmlspecialchars($komment['FNEV'], ENT_QUOTES, 'UTF-8');
+                            $tartalom = htmlspecialchars($komment['TARTALOM'], ENT_QUOTES, 'UTF-8');
+                            echo "
+                        <div class='comment'>
+                            <div class='comment-user'>$nev</div>
+                            <div class='comment-text'>$tartalom</div>
+                        </div>
+                    ";
+                        }
+
+                        oci_free_statement($stmt);
+                        oci_free_statement($refCursor);
+
+                        if (!$hasComment) {
+                            echo "
+                        <div class='no-comments'>
+                            Jelenleg még nincs egy komment sem!
+                        </div>
+                    ";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
 </div>
-
 
 </body>
 </html>

@@ -16,6 +16,13 @@ require_once 'resources/SUPPORT_FUNCS/db_connection.php';
 
 <?php include 'navbar.php'; ?>
 
+<?php if (isset($_SESSION['success_message'])): ?>
+    <script>
+        alert("<?= addslashes($_SESSION['success_message']) ?>");
+    </script>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
+
 <div class="main-layout">
     <aside class="sidebar">
         <h2>Ranglista</h2>

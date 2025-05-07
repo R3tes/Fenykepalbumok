@@ -1,65 +1,17 @@
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f2f5;
     margin: 0;
 }
 
-form, .palyazat {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    width: 300px;
-
-    margin: 10% auto;
-}
-
-.city-item {
-    padding: 10px;
-    background-color: #f4f9f9;
-    border-radius: 8px;
-    margin: 10px;
+h1, h2 {
     text-align: center;
+    color: #333;
+    margin-bottom: 20px;
 }
 
-.city-label {
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.location-info {
-    font-size: 13px;
-    color: #444;
-    margin-top: 5px;
-}
-
-.disabled-btn {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    width: 300px;
-
-    margin: 2% auto;
-}
-
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="email"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button,
-input[type="submit"] {
+button, input[type="submit"] {
     background-color: #4CAF50;
     color: white;
     padding: 10px;
@@ -67,27 +19,37 @@ input[type="submit"] {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-button:hover,
-input[type="submit"]:hover {
+button:hover, input[type="submit"]:hover {
     background-color: #007bff;
 }
 
-button:disabled {
+button:disabled, input[type="submit"]:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-button:disabled:hover {
-    background-color: #ccc;
+/* Form Styles */
+form, .palyazat, .disabled-btn {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin: 10% auto;
 }
 
-h2 {
-    text-align: center;
+input[type="text"], input[type="password"], input[type="email"] {
+    width: 100%;
+    padding: 10px;
     margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
+/* Menu Styles */
 .menu {
     display: flex;
     justify-content: flex-end;
@@ -109,6 +71,7 @@ h2 {
     background-color: #333;
 }
 
+/* Container Styles */
 .container {
     max-width: 1200px;
     width: 100%;
@@ -118,12 +81,27 @@ h2 {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+/* City Item Styles */
+.city-item {
+    padding: 10px;
+    background-color: #f4f9f9;
+    border-radius: 8px;
+    margin: 10px;
     text-align: center;
-    color: #333;
-    margin-bottom: 20px;
 }
 
+.city-label {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.location-info {
+    font-size: 13px;
+    color: #444;
+    margin-top: 5px;
+}
+
+/* Admin Actions */
 .admin-actions {
     display: flex;
     justify-content: flex-start;
@@ -143,14 +121,14 @@ h1 {
     background-color: #0056b3;
 }
 
+/* Table Styles */
 .palyazatok-lista {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-.palyazatok-lista th,
-.palyazatok-lista td {
+.palyazatok-lista th, .palyazatok-lista td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -177,6 +155,7 @@ h1 {
     margin-right: 10px;
 }
 
+/* Edit Form */
 .edit-form {
     display: flex;
     flex-direction: column;
@@ -198,8 +177,7 @@ h1 {
     margin-bottom: 5px;
 }
 
-.edit-form input[type="text"],
-.edit-form input[list] {
+.edit-form input[type="text"], .edit-form input[list] {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -220,5 +198,3 @@ h1 {
 .edit-form .save-btn:hover {
     background-color: #218838;
 }
-
-

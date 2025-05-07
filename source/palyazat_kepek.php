@@ -64,12 +64,16 @@ oci_execute($stmt);
 </head>
 <body>
 <?php include 'navbar.php'; ?>
+
+<?php if (isset($_SESSION['success_message'])): ?>
+    <script>
+        alert("<?= addslashes($_SESSION['success_message']) ?>");
+    </script>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
+
 <div class="container">
     <h1><?php echo htmlspecialchars($palyazatNev, ENT_QUOTES, 'UTF-8'); ?> - Képek</h1>
-
-    <?php if (isset($_SESSION['success_message'])): ?>
-        <p style="color: green;"><?php echo $_SESSION['success_message']; unset($_SESSION['success_message']); ?></p>
-    <?php endif; ?>
 
     <?php if ($nyertesKepID): ?>
         <p style="color: red; font-weight: bold;">Ez a pályázat lezárult, a nyertes ki lett hirdetve.</p>

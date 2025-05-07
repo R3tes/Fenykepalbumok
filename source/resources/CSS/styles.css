@@ -8,7 +8,6 @@ button{
     padding: 8px 16px;
     background-color: #66dbdb;
     border: none;
-    /*max-width: 50%;*/
     border-radius: 4px;
     color: #232F3E;
     font-weight: bold;
@@ -31,13 +30,14 @@ button{
 
 .photo-del-option.selected {
     opacity: 0.4;
-    border-color: #40ff15;
+    border-color: red;
 }
 
 .photo-del-option img {
     width: 100%;
     height: auto;
     border-radius: 5px;
+    border-color: red;
 }
 
 .album-del-select-grid {
@@ -64,7 +64,6 @@ button{
     border-radius: 5px;
 }
 
-/*---*/
 .photo-album-del-select-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -93,13 +92,11 @@ button{
     border: 1px solid #ccc;
     border-radius: 4px;
 }
-/*---*/
 
 .title{
     text-align: center;
 }
 
-/* Image formatting */
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fit, 200px);

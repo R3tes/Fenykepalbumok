@@ -1,18 +1,44 @@
+/* General Styles */
+body {
+    margin: 0;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    margin-top: 1rem;
+    resize: vertical;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* Picture Page Layout */
 .picture-page {
     position: relative;
     padding: 20px;
 }
 
-body {
-    margin: 0;
+.picture-page-flex {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+.picture-left,
+.picture-right {
+    flex: 1;
 }
 
 .picture-container img {
-    max-width: 40%;
+    max-width: 100%;
     height: auto;
     border-radius: 12px;
 }
 
+/* Info Container */
 .info-container {
     max-width: 40%;
     display: flex;
@@ -20,15 +46,10 @@ body {
     gap: 10px;
 }
 
-textarea {
-    width: 100%;
-    height: 100px;
-    margin-top: 1rem;
-}
-
+/* Like Button */
 .like-button {
-    background-color: #28a3a7;
-    color: white;
+    background-color: #28a745;
+    color: black;
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
@@ -39,6 +60,7 @@ textarea {
 
 .like-button:hover {
     background-color: #217588;
+    color: white;
 }
 
 .like-button.liked {
@@ -50,28 +72,22 @@ textarea {
     background-color: gray;
 }
 
-.no-comments {
-    background-color: #fff5cc;
-    color: #a67c00;
-    padding: 12px;
-    text-align: center;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 16px;
-}
-
+/* Comments Section */
 .comments-container {
-    position: absolute;
-    top: 3%;
-    right: 1%;
-    width: 25%;
-    max-height: 80vh;
+    flex: 2;
+    width: 100%;
     background: #e5fcff;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    margin-top: 20px;
+}
+
+.comments-container h3 {
+    margin-bottom: 10px;
+    font-size: 22px;
 }
 
 .comments-scrollable {
@@ -80,12 +96,19 @@ textarea {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /*max-height: 65vh;*/
 }
 
-.comments-container h3 {
-    margin-bottom: 10px;
-    font-size: 22px;
+.comments-scrollable::-webkit-scrollbar {
+    width: 8px;
+}
+
+.comments-scrollable::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.comments-scrollable::-webkit-scrollbar-thumb:hover {
+    background: #999;
 }
 
 .comments {
@@ -98,7 +121,7 @@ textarea {
     background: #f8f8f8;
     padding: 12px;
     border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -116,13 +139,50 @@ textarea {
     word-break: break-word;
 }
 
-.comments-scrollable::-webkit-scrollbar {
-    width: 8px;
+.no-comments {
+    background-color: #fff5cc;
+    color: #a67c00;
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
 }
-.comments-scrollable::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
+
+/* Interaction Section */
+.interaction-and-comments {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
-.comments-scrollable::-webkit-scrollbar-thumb:hover {
-    background: #999;
+
+.interaction-box {
+    flex: 1;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.comment-form {
+    flex: 1;
+    min-width: 250px;
+}
+
+.comment-form button {
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    background-color: #28a745;
+    color: black;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.comment-form button:hover {
+    background-color: #1f7a7a;
+    color: white;
 }

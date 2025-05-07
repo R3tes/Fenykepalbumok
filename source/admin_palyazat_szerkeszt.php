@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     oci_bind_by_name($stmt, ':pid', $pID);
 
     if (oci_execute($stmt)) {
+        $_SESSION['success_message'] = "A pályázat neve sikeresen frissítve lett.";
         header("Location: palyazatok.php");
         exit();
     } else {

@@ -80,6 +80,8 @@ if (!empty($kategoriNev)) {
 }
 
 oci_close($conn);
+
+$_SESSION['success_message'] = "Kép adatai sikeresen frissítve.";
 header("Location: picture.php?id=" . $kepID);
 exit();
 ?>

@@ -2,11 +2,6 @@
 session_start();
 include 'resources/SUPPORT_FUNCS/db_connection.php';
 
-if (isset($_SESSION['success_message'])) {
-    echo "<p style='color:green; text-align:center;'>" . $_SESSION['success_message'] . "</p>";
-    unset($_SESSION['success_message']);
-}
-
 $hiba = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -26,8 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['is_admin'] = $row['JOGOSULTSAG'] === 'admin';
                 $_SESSION['user_id'] = $email;
 
-                $_SESSION['login_success'] = "Sikeres bejelentkezés. Üdvözlünk, " . htmlspecialchars($row['FNEV'], ENT_QUOTES, 'UTF-8') . "!";
-
                 $naplo_stmt = oci_parse($conn, "INSERT INTO SessionNaplo (felhasznalo_id, belepes_ideje) VALUES (:fid, SYSDATE)");
                 oci_bind_by_name($naplo_stmt, ":fid", $row['FID']);
                 if (!oci_execute($naplo_stmt)) {
@@ -36,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 oci_free_statement($naplo_stmt);
 
+                $_SESSION['success_message'] = "Sikeres bejelentkezés. Üdvözlünk, " . htmlspecialchars($row['FNEV'], ENT_QUOTES, 'UTF-8') . "!";
                 header("Location: index.php");
                 exit;
             } else {
@@ -63,6 +57,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
 <?php include 'navbar.php'; ?>
+<?php if (isset($_SESSION['success_message'])): ?>
+    <script>
+        alert("<?= addslashes($_SESSION['success_message']) ?>");
+    </script>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
 
 <form method="POST">
     <h2>Bejelentkezés</h2>

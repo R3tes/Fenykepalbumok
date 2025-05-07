@@ -14,6 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     oci_bind_by_name($stmt, ':pnev', $palyazatNev);
 
     if (oci_execute($stmt)) {
+
+        $_SESSION['success_message'] = "Új pályázat sikeresen létrehozva.";
         header("Location: palyazatok.php");
         exit();
     } else {

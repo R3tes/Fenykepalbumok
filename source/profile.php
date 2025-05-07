@@ -23,7 +23,9 @@ if (isset($_POST['createAlbum'])) {
 
             if (oci_execute($stmt)) {
                 oci_free_statement($stmt);
-                header("Location: profile.php?id=" . (int)$_SESSION["fID"]); // Sikeres létrehozás után frissítjük az oldalt
+
+                $_SESSION['success_message'] = "Album létrehozás sikeresen megtörtént.";
+                header("Location: profile.php?id=" . (int)$_SESSION["fID"]);
                 exit();
             } else {
                 $error = oci_error($stmt);
@@ -180,6 +182,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     oci_free_statement($stmt);
                 }
             }
+
+            $_SESSION['success_message'] = "Kép(ek) törlése sikeresen megtörtént.";
+            header("Location: profile.php?id=" . $_SESSION['fID']);
+            exit();
         }
     }
 
@@ -194,10 +200,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             oci_free_statement($stmt);
         }
 
+        $_SESSION['success_message'] = "Album(ok) törlése sikeresen megtörtént.";
         header("Location: profile.php?id=" . $_SESSION['fID']);
         exit();
     }
 
+    $_SESSION['success_message'] = "Kép feltöltése sikeresen megtörtént.";
     header("Location: profile.php?id=" . $_SESSION["fID"]);
     exit();
 }
@@ -210,19 +218,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <title>Profil</title>
         <link rel="stylesheet" href="resources/CSS/styles.css">
         <link rel="stylesheet" href="resources/CSS/upload.css">
+        <script src="resources/JS/popup.js"></script>
     </head>
     <body>
     <?php include 'navbar.php'; ?>
-    <script src="resources/JS/popup.js"></script>
+
+    <?php if (isset($_SESSION['error_message'])): ?>
+        <script>
+            alert("<?php echo addslashes($_SESSION['error_message']); ?>");
+        </script>
+        <?php unset($_SESSION['error_message']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['success_message'])): ?>
+        <script>
+            alert("<?= addslashes($_SESSION['success_message']) ?>");
+        </script>
+        <?php unset($_SESSION['success_message']); ?>
+    <?php endif; ?>
 
     <main>
-        <?php if (isset($_SESSION['error_message'])): ?>
-            <script>
-                alert("<?php echo addslashes($_SESSION['error_message']); ?>");
-            </script>
-            <?php unset($_SESSION['error_message']); ?>
-        <?php endif; ?>
-
         <div class="title">
             <h1>
                 <?php

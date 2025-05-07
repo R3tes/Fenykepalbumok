@@ -84,6 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 oci_free_statement($stmt);
             }
         }
+
+        $_SESSION['success_message'] = "Album sikeresen módosítva.";
         header("Location: album.php?album=" . $albumID);
         exit();
     }
@@ -98,11 +100,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="resources/CSS/styles.css">
     <link rel="stylesheet" href="resources/CSS/index.css">
     <link rel="stylesheet" href="resources/CSS/upload.css">
+    <script src="resources/JS/popup.js"></script>
 </head>
 
 <body>
 <?php include 'navbar.php'; ?>
-<script src="resources/JS/popup.js"></script>
+<?php if (isset($_SESSION['success_message'])): ?>
+    <script>
+        alert("<?= addslashes($_SESSION['success_message']) ?>");
+    </script>
+    <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
 
 <?php if (isset($_SESSION["fID"]) && $_SESSION["fID"] == $albumTulajdonosID) {
     echo '<button class="add-images-button" onclick="openAddPhotosPopup()">Képek hozzáadása</button>';
@@ -112,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="popup-content">
         <span onclick="closeAddPhotosPopup()" class="close">&times;</span>
         <h2>Képek kiválasztása</h2>
-        <form method="POST" onsubmit="updateSelectedPhotos()">
+        <form class="album-form" method="POST" onsubmit="updateSelectedPhotos()">
             <div class="photo-select-grid">
                 <?php
                 $vanKep = false;
@@ -168,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="popup-content">
                 <span class="close" onclick="closeAlbumEditPopup()">&times;</span>
                 <h2>Album módosítása</h2>
-                <form method="POST" onsubmit="return updateAlbumEditForm();">
+                <form class="album-form" method="POST" onsubmit="return updateAlbumEditForm();">
                     <input type="hidden" name="albumID" value="<?php echo $albumID; ?>">
 
                     <label for="newAlbumName">Új albumnév:</label>
