@@ -6,7 +6,8 @@ Célunk egy olyan platform létrehozása, ahol a fényképészek támogathatják
 
 Adatbázis tábla törlési sorrend:
 
-DROP TABLE SessionNaplo; <br>
+DROP TABLE Ertesites;<br>
+DROP TABLE SessionNaplo;<br>
 DROP TABLE Nyertesek;<br>
 DROP TABLE Szavazatok;<br>
 DROP TABLE Tartalmaz;<br>
