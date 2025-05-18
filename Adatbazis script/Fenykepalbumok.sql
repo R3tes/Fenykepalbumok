@@ -107,16 +107,16 @@ CREATE TABLE Szavazatok (
     kepID INT,
     pID INT,
     PRIMARY KEY (fID, kepID, pID),
-    FOREIGN KEY (fID) REFERENCES Felhasznalo(fID),
-    FOREIGN KEY (kepID) REFERENCES Kep(kepID),
-    FOREIGN KEY (pID) REFERENCES Palyazat(pID)
+    FOREIGN KEY (fID) REFERENCES Felhasznalo(fID) ON DELETE CASCADE,
+    FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE CASCADE,
+    FOREIGN KEY (pID) REFERENCES Palyazat(pID) ON DELETE CASCADE
 );
 
 CREATE TABLE Nyertesek (
-     pID INT PRIMARY KEY,
-     kepID INT,
-     FOREIGN KEY (pID) REFERENCES Palyazat(pID),
-     FOREIGN KEY (kepID) REFERENCES Kep(kepID)
+    pID INT PRIMARY KEY,
+    kepID INT,
+    FOREIGN KEY (pID) REFERENCES Palyazat(pID) ON DELETE CASCADE,
+    FOREIGN KEY (kepID) REFERENCES Kep(kepID) ON DELETE SET NULL
 );
 
 CREATE TABLE SessionNaplo (
@@ -124,7 +124,7 @@ CREATE TABLE SessionNaplo (
         felhasznalo_id NUMBER NOT NULL,
         belepes_ideje DATE DEFAULT SYSDATE,
         kilepes_ideje DATE,
-        FOREIGN KEY (felhasznalo_id) REFERENCES Felhasznalo(fID)
+        FOREIGN KEY (felhasznalo_id) REFERENCES Felhasznalo(fID) ON DELETE CASCADE
 );
 
 CREATE TABLE Ertesites (
@@ -133,7 +133,7 @@ CREATE TABLE Ertesites (
     uzenet VARCHAR2(255),
     olvasott NUMBER(1) DEFAULT 0,
     letrehozas_datuma DATE DEFAULT SYSDATE,
-    FOREIGN KEY (felhasznalo_id) REFERENCES Felhasznalo(fID)
+    FOREIGN KEY (felhasznalo_id) REFERENCES Felhasznalo(fID) ON DELETE CASCADE
 );
 
 -- Sequencek amik száomntartják a következő indexet
